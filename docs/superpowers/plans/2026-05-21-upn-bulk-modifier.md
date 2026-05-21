@@ -2166,7 +2166,7 @@ Create `ADTool/Views/Step1InputView.xaml`:
             <TextBox Width="160" Text="{Binding NewSuffix, UpdateSourceTrigger=PropertyChanged}"
                      ToolTip="e.g. @new.contoso.com" Margin="0,0,8,0"/>
             <Button Content="Apply" Command="{Binding ApplySuffixSwapCommand}" Padding="8,5"/>
-        </StackPanel>
+        </WrapPanel>
 
         <!-- Column headers hint -->
         <TextBlock Grid.Row="1" Text="Enter UPN changes below, or import from CSV (columns: OldUPN, NewUPN)"

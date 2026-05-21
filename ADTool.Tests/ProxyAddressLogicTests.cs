@@ -54,7 +54,18 @@ public class ProxyAddressLogicTests
     {
         var existing = new[] { "SMTP:JSMITH@OLD.COM" };
         var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
-        Assert.DoesNotContain(result, a => a.StartsWith("SMTP:JSMITH@OLD", StringComparison.OrdinalIgnoreCase) && a.StartsWith("SMTP:"));
+        // Old uppercase primary should be gone; replaced with lowercase secondary
+        Assert.DoesNotContain("SMTP:JSMITH@OLD.COM", result);
+        Assert.Contains("SMTP:jsmith@new.com", result);
+        Assert.Single(result.Where(a => a.StartsWith("SMTP:")));
+    }
+
+    [Fact]
+    public void NoPrimary_OldUpnAlreadySecondary_NoDuplicate()
+    {
+        var existing = new[] { "smtp:jsmith@old.com", "smtp:jsmith@alias.com" };
+        var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
+        Assert.Single(result.Where(a => a.Equals("smtp:jsmith@old.com", StringComparison.OrdinalIgnoreCase)));
         Assert.Contains("SMTP:jsmith@new.com", result);
     }
 }

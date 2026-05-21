@@ -5,6 +5,10 @@ public static class ProxyAddressHelper
     public static IReadOnlyList<string> UpdateProxyAddresses(
         IEnumerable<string> existing, string oldUpn, string newUpn)
     {
+        ArgumentNullException.ThrowIfNull(existing);
+        ArgumentNullException.ThrowIfNull(oldUpn);
+        ArgumentNullException.ThrowIfNull(newUpn);
+
         var result = new List<string>();
         bool foundPrimary = false;
 
@@ -21,7 +25,7 @@ public static class ProxyAddressHelper
             }
         }
 
-        if (!foundPrimary)
+        if (!foundPrimary && !result.Any(a => a.Equals($"smtp:{oldUpn}", StringComparison.OrdinalIgnoreCase)))
             result.Add($"smtp:{oldUpn}");
 
         result.Add($"SMTP:{newUpn}");

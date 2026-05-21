@@ -61,4 +61,40 @@ public class Step4ExecuteViewModelTests
 
         adMock.Verify(s => s.UpdateUserAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
     }
+
+    [Fact]
+    public async Task ExecuteAllAsync_Sets_ErrorInfo_For_ProxyAddressConflict()
+    {
+        var adMock = new Mock<IAdService>();
+        adMock.Setup(s => s.UpdateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+              .ReturnsAsync(new ExecutionResult(false, ExecutionErrorType.ProxyAddressConflict, null));
+        var entries = TwoEntries();
+        var vm = new Step4ExecuteViewModel(entries, adMock.Object, () => { });
+
+        await vm.ExecuteAllAsync();
+
+        Assert.All(entries, e =>
+        {
+            Assert.False(string.IsNullOrEmpty(e.ErrorTitle));
+            Assert.False(string.IsNullOrEmpty(e.ErrorDetail));
+        });
+    }
+
+    [Fact]
+    public async Task ExecuteAllAsync_Sets_ErrorInfo_For_UnexpectedError()
+    {
+        var adMock = new Mock<IAdService>();
+        adMock.Setup(s => s.UpdateUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+              .ReturnsAsync(new ExecutionResult(false, ExecutionErrorType.UnexpectedError, "some technical detail"));
+        var entries = TwoEntries();
+        var vm = new Step4ExecuteViewModel(entries, adMock.Object, () => { });
+
+        await vm.ExecuteAllAsync();
+
+        Assert.All(entries, e =>
+        {
+            Assert.False(string.IsNullOrEmpty(e.ErrorTitle));
+            Assert.False(string.IsNullOrEmpty(e.ErrorDetail));
+        });
+    }
 }

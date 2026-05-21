@@ -90,7 +90,7 @@ public enum ExecutionStatus  { Pending, Success, Failed }
 
 ### Step 2 — Validate
 
-On entry, runs `IAdService.ValidateUsersAsync()` against all `Pending` rows concurrently (with a progress indicator):
+On entry, calls `IAdService.ValidateUserAsync()` per row concurrently (with a progress indicator):
 
 1. `UserPrincipal.FindByIdentity()` — confirms user exists, populates `DisplayName`
 2. LDAP search for `NewUPN` — confirms it is not already assigned to another object
@@ -160,6 +160,7 @@ Rules:
 - The old primary is lowercased in-place (prefix changed to `smtp:`)
 - The new primary is inserted with uppercase `SMTP:` prefix
 - No other entries are modified or removed
+- If no `SMTP:` primary exists (edge case), the `NewUPN` is added as `SMTP:NewUPN` and the `OldUPN` is added as `smtp:OldUPN` — no demotion step needed
 
 ---
 

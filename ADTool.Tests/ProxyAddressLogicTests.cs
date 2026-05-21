@@ -1,0 +1,60 @@
+using ADTool.Services;
+
+namespace ADTool.Tests;
+
+public class ProxyAddressLogicTests
+{
+    [Fact]
+    public void DemotesOldPrimaryAndAddsNewPrimary()
+    {
+        var existing = new[] { "SMTP:jsmith@old.com", "smtp:jsmith@alias.com" };
+        var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
+        Assert.Contains("smtp:jsmith@old.com", result);
+        Assert.Contains("SMTP:jsmith@new.com", result);
+        Assert.DoesNotContain("SMTP:jsmith@old.com", result);
+    }
+
+    [Fact]
+    public void PreservesExistingSecondaryAddresses()
+    {
+        var existing = new[] { "SMTP:jsmith@old.com", "smtp:jsmith@alias.com", "smtp:jsmith@other.com" };
+        var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
+        Assert.Contains("smtp:jsmith@alias.com", result);
+        Assert.Contains("smtp:jsmith@other.com", result);
+    }
+
+    [Fact]
+    public void ExactlyOnePrimaryAfterUpdate()
+    {
+        var existing = new[] { "SMTP:jsmith@old.com", "smtp:jsmith@alias.com" };
+        var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
+        Assert.Single(result.Where(a => a.StartsWith("SMTP:")));
+    }
+
+    [Fact]
+    public void HandlesNoPrimaryExisting()
+    {
+        var existing = new[] { "smtp:jsmith@alias.com" };
+        var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
+        Assert.Contains("smtp:jsmith@old.com", result);
+        Assert.Contains("SMTP:jsmith@new.com", result);
+        Assert.Single(result.Where(a => a.StartsWith("SMTP:")));
+    }
+
+    [Fact]
+    public void HandlesEmptyExistingProxyAddresses()
+    {
+        var result = ProxyAddressHelper.UpdateProxyAddresses([], "jsmith@old.com", "jsmith@new.com");
+        Assert.Contains("smtp:jsmith@old.com", result);
+        Assert.Contains("SMTP:jsmith@new.com", result);
+    }
+
+    [Fact]
+    public void MatchIsCaseInsensitiveForOldPrimary()
+    {
+        var existing = new[] { "SMTP:JSMITH@OLD.COM" };
+        var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
+        Assert.DoesNotContain(result, a => a.StartsWith("SMTP:JSMITH@OLD", StringComparison.OrdinalIgnoreCase) && a.StartsWith("SMTP:"));
+        Assert.Contains("SMTP:jsmith@new.com", result);
+    }
+}

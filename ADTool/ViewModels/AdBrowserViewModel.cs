@@ -20,6 +20,7 @@ public class SelectableAdUser : INotifyPropertyChanged
         get => _isSelected;
         set
         {
+            if (_isSelected == value) return;
             _isSelected = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
         }
@@ -40,6 +41,7 @@ public class AdBrowserViewModel : BaseViewModel
     private ObservableCollection<SelectableAdUser> _users = [];
     private bool _isLoadingTree;
     private bool _isLoadingUsers;
+    private CancellationTokenSource _loadUsersCts = new();
 
     public IReadOnlyList<OuNode> OuNodes
     {
@@ -53,7 +55,9 @@ public class AdBrowserViewModel : BaseViewModel
         set
         {
             SetField(ref _selectedOu, value);
-            LatestLoadUsersTask = LoadUsersAsync(value);
+            _loadUsersCts.Cancel();
+            _loadUsersCts = new CancellationTokenSource();
+            LatestLoadUsersTask = LoadUsersAsync(value, _loadUsersCts.Token);
         }
     }
 
@@ -87,18 +91,24 @@ public class AdBrowserViewModel : BaseViewModel
         _adService = adService;
         _onAddToList = onAddToList;
         AddSelectedToListCommand = new RelayCommand(AddSelectedToList, () => _users.Any(u => u.IsSelected));
-        ExportToCsvCommand = new RelayCommand(ExportToCsv, () => !_isLoadingTree && _users.Count > 0);
+        ExportToCsvCommand = new RelayCommand(ExportToCsv, () => !_isLoadingTree && !_isLoadingUsers && _users.Count > 0);
     }
 
     public async Task LoadTreeAsync()
     {
         IsLoadingTree = true;
-        OuNodes = await _adService.GetOuTreeAsync();
-        IsLoadingTree = false;
-        ExportToCsvCommand.RaiseCanExecuteChanged();
+        try
+        {
+            OuNodes = await _adService.GetOuTreeAsync();
+        }
+        finally
+        {
+            IsLoadingTree = false;
+            ExportToCsvCommand.RaiseCanExecuteChanged();
+        }
     }
 
-    private async Task LoadUsersAsync(OuNode? ou)
+    private async Task LoadUsersAsync(OuNode? ou, CancellationToken ct)
     {
         Users = [];
         AddSelectedToListCommand.RaiseCanExecuteChanged();
@@ -106,16 +116,25 @@ public class AdBrowserViewModel : BaseViewModel
         if (ou is null) return;
 
         IsLoadingUsers = true;
-        var rawUsers = await _adService.GetUsersInOuAsync(ou.DistinguishedName);
-        var selectable = rawUsers.Select(u =>
+        try
         {
-            var s = new SelectableAdUser(u);
-            s.PropertyChanged += (_, _) => AddSelectedToListCommand.RaiseCanExecuteChanged();
-            return s;
-        });
-        Users = new ObservableCollection<SelectableAdUser>(selectable);
-        IsLoadingUsers = false;
-        ExportToCsvCommand.RaiseCanExecuteChanged();
+            var rawUsers = await _adService.GetUsersInOuAsync(ou.DistinguishedName);
+            if (ct.IsCancellationRequested) return;
+
+            var selectable = rawUsers.Select(u =>
+            {
+                var s = new SelectableAdUser(u);
+                s.PropertyChanged += (_, _) => AddSelectedToListCommand.RaiseCanExecuteChanged();
+                return s;
+            });
+            Users = new ObservableCollection<SelectableAdUser>(selectable);
+            ExportToCsvCommand.RaiseCanExecuteChanged();
+        }
+        finally
+        {
+            if (!ct.IsCancellationRequested)
+                IsLoadingUsers = false;
+        }
     }
 
     private void AddSelectedToList()
@@ -137,7 +156,7 @@ public class AdBrowserViewModel : BaseViewModel
         using var writer = new StreamWriter(dlg.FileName);
         writer.WriteLine("OldUPN,NewUPN,DisplayName");
         foreach (var u in _users)
-            writer.WriteLine($"{u.UPN},,{EscapeCsv(u.DisplayName)}");
+            writer.WriteLine($"{EscapeCsv(u.UPN)},,{EscapeCsv(u.DisplayName)}");
     }
 
     private static string EscapeCsv(string v) =>

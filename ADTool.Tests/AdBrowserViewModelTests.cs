@@ -118,4 +118,29 @@ public class AdBrowserViewModelTests
 
         Assert.True(closeFired);
     }
+
+    [Fact]
+    public async Task LoadTreeAsync_ResetsIsLoadingTreeOnException()
+    {
+        var mock = new Mock<IAdService>();
+        mock.Setup(s => s.GetOuTreeAsync()).ThrowsAsync(new Exception("AD down"));
+        var vm = new AdBrowserViewModel(mock.Object, _ => { });
+
+        await Assert.ThrowsAsync<Exception>(() => vm.LoadTreeAsync());
+
+        Assert.False(vm.IsLoadingTree);
+    }
+
+    [Fact]
+    public async Task SettingSelectedOu_ResetsIsLoadingUsersOnException()
+    {
+        var mock = new Mock<IAdService>();
+        mock.Setup(s => s.GetUsersInOuAsync(It.IsAny<string>())).ThrowsAsync(new Exception("AD down"));
+        var vm = new AdBrowserViewModel(mock.Object, _ => { });
+
+        vm.SelectedOu = new OuNode("Sales", "OU=Sales,DC=contoso,DC=com", []);
+        await Assert.ThrowsAsync<Exception>(() => vm.LatestLoadUsersTask);
+
+        Assert.False(vm.IsLoadingUsers);
+    }
 }

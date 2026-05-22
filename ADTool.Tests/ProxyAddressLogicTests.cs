@@ -68,4 +68,15 @@ public class ProxyAddressLogicTests
         Assert.Single(result.Where(a => a.Equals("smtp:jsmith@old.com", StringComparison.OrdinalIgnoreCase)));
         Assert.Contains("SMTP:jsmith@new.com", result);
     }
+
+    [Fact]
+    public void NewUpnAlreadyExistsAsSecondary_PromotedToPrimaryNoDuplicate()
+    {
+        // smtp:jsmith@new.com already exists as a secondary — should be promoted, not duplicated
+        var existing = new[] { "SMTP:jsmith@old.com", "smtp:jsmith@new.com", "smtp:jsmith@alias.com" };
+        var result = ProxyAddressHelper.UpdateProxyAddresses(existing, "jsmith@old.com", "jsmith@new.com");
+        Assert.Contains("SMTP:jsmith@new.com", result);
+        Assert.DoesNotContain("smtp:jsmith@new.com", result);
+        Assert.Single(result.Where(a => a.StartsWith("SMTP:")));
+    }
 }

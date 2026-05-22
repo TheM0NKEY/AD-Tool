@@ -28,6 +28,8 @@ public static class ProxyAddressHelper
         if (!foundPrimary && !result.Any(a => a.Equals($"smtp:{oldUpn}", StringComparison.OrdinalIgnoreCase)))
             result.Add($"smtp:{oldUpn}");
 
+        result.RemoveAll(a => a.Equals($"smtp:{newUpn}", StringComparison.OrdinalIgnoreCase)
+                           || a.Equals($"SMTP:{newUpn}", StringComparison.OrdinalIgnoreCase));
         result.Add($"SMTP:{newUpn}");
         return result;
     }

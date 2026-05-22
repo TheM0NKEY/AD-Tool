@@ -1,3 +1,4 @@
+using ADTool.Models;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 
@@ -71,6 +72,109 @@ public class AdService : IAdService
                 return new ExecutionResult(false, ExecutionErrorType.UnexpectedError, ex.Message);
             }
         });
+    }
+
+    public async Task<bool> CheckIsDomainAdminAsync()
+    {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                using var ctx = new PrincipalContext(ContextType.Domain);
+                using var user = UserPrincipal.Current;
+                var groups = user.GetAuthorizationGroups();
+                return groups.Any(g => g.Name.Equals("Domain Admins", StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                return false;
+            }
+        });
+    }
+
+    public async Task<IReadOnlyList<OuNode>> GetOuTreeAsync()
+    {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                using var rootDse = new DirectoryEntry("LDAP://RootDSE");
+                string defaultNC = rootDse.Properties["defaultNamingContext"][0]!.ToString()!;
+                string rootName = string.Join(".", defaultNC
+                    .Split(',')
+                    .Where(p => p.TrimStart().StartsWith("DC=", StringComparison.OrdinalIgnoreCase))
+                    .Select(p => p.TrimStart()[3..]));
+                var children = GetOuChildren(defaultNC);
+                return (IReadOnlyList<OuNode>)[new OuNode(rootName, defaultNC, children)];
+            }
+            catch
+            {
+                return Array.Empty<OuNode>();
+            }
+        });
+    }
+
+    public async Task<IReadOnlyList<AdUser>> GetUsersInOuAsync(string ouDistinguishedName)
+    {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                using var entry = new DirectoryEntry($"LDAP://{ouDistinguishedName}");
+                using var searcher = new DirectorySearcher(entry)
+                {
+                    Filter = "(&(objectClass=user)(objectCategory=person)(userPrincipalName=*))",
+                    SearchScope = SearchScope.Subtree,
+                    PageSize = 1000
+                };
+                searcher.PropertiesToLoad.AddRange(new[] { "userPrincipalName", "displayName" });
+
+                using var results = searcher.FindAll();
+                var users = new List<AdUser>();
+                foreach (SearchResult result in results)
+                {
+                    string upn = result.Properties["userPrincipalName"][0]?.ToString() ?? "";
+                    string displayName = result.Properties["displayName"].Count > 0
+                        ? result.Properties["displayName"][0]?.ToString() ?? upn
+                        : upn;
+                    if (!string.IsNullOrEmpty(upn))
+                        users.Add(new AdUser(upn, displayName));
+                }
+                return (IReadOnlyList<AdUser>)users;
+            }
+            catch
+            {
+                return Array.Empty<AdUser>();
+            }
+        });
+    }
+
+    private static IReadOnlyList<OuNode> GetOuChildren(string parentDn)
+    {
+        try
+        {
+            using var entry = new DirectoryEntry($"LDAP://{parentDn}");
+            using var searcher = new DirectorySearcher(entry)
+            {
+                Filter = "(objectClass=organizationalUnit)",
+                SearchScope = SearchScope.OneLevel
+            };
+            searcher.PropertiesToLoad.AddRange(new[] { "name", "distinguishedName" });
+
+            using var results = searcher.FindAll();
+            var nodes = new List<OuNode>();
+            foreach (SearchResult result in results)
+            {
+                string dn = result.Properties["distinguishedName"][0]?.ToString() ?? "";
+                string name = result.Properties["name"][0]?.ToString() ?? dn;
+                nodes.Add(new OuNode(name, dn, GetOuChildren(dn)));
+            }
+            return nodes;
+        }
+        catch
+        {
+            return Array.Empty<OuNode>();
+        }
     }
 
     private static bool IsValidUpnSuffix(string suffix)

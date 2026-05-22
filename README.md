@@ -10,7 +10,7 @@ A WPF .NET 8 desktop tool for bulk-modifying Active Directory user UPNs (User Pr
 
 ## Installation
 
-Download `ADTool.exe` from the latest release. No installer or .NET runtime required — it is self-contained.
+Download `ADTool-vX.X.X-win-x64.zip` from the [latest release](https://github.com/TheM0NKEY/AD-Tool/releases/latest), extract all files into the same folder, and run `ADTool.exe`. Windows will prompt for UAC elevation. No installer or .NET runtime required.
 
 ## Usage
 

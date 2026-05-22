@@ -11,14 +11,32 @@ public partial class AdBrowserDialog : Window
     {
         InitializeComponent();
         DataContext = vm;
-        vm.RequestClose += (_, _) => Close();
-        Loaded += async (_, _) => await vm.LoadTreeAsync();
+
+        // Unsubscribe on close to prevent GC retention
+        EventHandler? closeHandler = null;
+        closeHandler = (_, _) =>
+        {
+            vm.RequestClose -= closeHandler;
+            Close();
+        };
+        vm.RequestClose += closeHandler;
+
+        // Guard async void Loaded handler to catch exceptions
+        Loaded += async (_, _) =>
+        {
+            try { await vm.LoadTreeAsync(); }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load OU tree: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        };
     }
 
     private void OnOuSelected(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-        if (DataContext is AdBrowserViewModel vm && e.NewValue is OuNode ou)
-            vm.SelectedOu = ou;
+        if (DataContext is AdBrowserViewModel vm)
+            vm.SelectedOu = e.NewValue as OuNode;
     }
 
     private void OnCancel(object sender, RoutedEventArgs e) => Close();

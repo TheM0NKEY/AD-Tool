@@ -19,7 +19,7 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8"
                     Visibility="{Binding IsValidating, Converter={StaticResource BoolToVis}}">
             <ProgressBar IsIndeterminate="False" Width="200" Height="8" VerticalAlignment="Center"
-                         Minimum="0" Maximum="{Binding TotalCount}" Value="{Binding ValidatedCount}"/>
+                         Minimum="0" Maximum="{Binding TotalCount, Mode=OneWay}" Value="{Binding ValidatedCount, Mode=OneWay}"/>
             <TextBlock Margin="8,0,0,0" VerticalAlignment="Center">
                 <Run Text="Validating "/>
                 <Run Text="{Binding ValidatedCount, Mode=OneWay}"/>

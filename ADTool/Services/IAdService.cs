@@ -1,3 +1,5 @@
+using ADTool.Models;
+
 namespace ADTool.Services;
 
 public enum ValidationType { None, UserNotFound, DuplicateNewUPN, InvalidDomain }
@@ -18,4 +20,7 @@ public interface IAdService
 {
     Task<ValidationResult> ValidateUserAsync(string oldUpn, string newUpn);
     Task<ExecutionResult> UpdateUserAsync(string oldUpn, string newUpn);
+    Task<bool> CheckIsDomainAdminAsync();
+    Task<IReadOnlyList<OuNode>> GetOuTreeAsync();
+    Task<IReadOnlyList<AdUser>> GetUsersInOuAsync(string ouDistinguishedName);
 }

@@ -6,7 +6,7 @@ A WPF .NET 8 desktop tool for bulk-modifying Active Directory user UPNs (User Pr
 
 - Windows 10 / 11
 - Domain-joined machine (or connectivity to a domain controller)
-- An account with **Write** access to `userPrincipalName` and `proxyAddresses` on the target OU (or Domain Admin)
+- An account that is a member of the **Domain Admins** group (required at startup)
 
 ## Installation
 
@@ -22,28 +22,40 @@ Double-click `ADTool.exe`, or launch from the command line:
 ADTool.exe
 ```
 
+The tool checks at startup whether the current user is a member of the **Domain Admins** group. If not, access is denied and the tool exits.
+
 To run in **dry-run mode** (no changes written to AD):
 
 ```
 ADTool.exe --dry-run
 ```
 
-Dry-run mode validates entries and simulates execution without touching Active Directory. Useful for testing or previewing changes before committing.
+Dry-run mode validates entries and simulates execution without touching Active Directory. The Domain Admin check is skipped in this mode. Useful for testing or previewing changes before committing.
 
 ---
 
 ### Step 1 — Input
 
-Add the UPN changes you want to make. There are three ways to populate the list:
+Add the UPN changes you want to make. There are four ways to populate the list:
+
+**Browse AD**
+Click **Browse AD…** to open a dialog that lets you explore the Active Directory OU tree. Select an OU to see all users under it (searched recursively). Check the users you want and click **Add Selected to List** to add them directly to the grid with `NewUPN` left blank, ready for the bulk suffix-swap tool. Alternatively, click **Export to CSV** to save the selected users to a file for external editing.
 
 **Import from CSV**
-Click **Import CSV** and select a file. The CSV must have `OldUPN` and `NewUPN` column headers (case-insensitive). Rows with duplicate `OldUPN` values are skipped with a warning.
+Click **Import CSV** and select a file. The CSV must have an `OldUPN` column header (case-insensitive). A `NewUPN` column is optional — if omitted, all imported rows will have `NewUPN` left blank so you can fill them in using the bulk suffix-swap tool. Rows with duplicate `OldUPN` values are skipped with a warning.
 
-Example CSV:
+Full two-column example:
 ```csv
 OldUPN,NewUPN
 alice@old.contoso.com,alice@contoso.com
 bob@old.contoso.com,bob@contoso.com
+```
+
+OldUPN-only example (NewUPN filled in via bulk suffix swap):
+```csv
+OldUPN
+alice@old.contoso.com
+bob@old.contoso.com
 ```
 
 **Bulk suffix swap**

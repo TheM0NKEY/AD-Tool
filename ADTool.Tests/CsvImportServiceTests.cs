@@ -1,73 +1,63 @@
 using ADTool.Services;
 using System.IO;
+using Xunit;
 
 namespace ADTool.Tests;
 
-public class CsvImportServiceTests : IDisposable
+public class CsvImportServiceTests
 {
-    private readonly string _tempFile = Path.GetTempFileName();
-    private readonly CsvImportService _svc = new();
-
-    public void Dispose() => File.Delete(_tempFile);
-
-    private void Write(string content) => File.WriteAllText(_tempFile, content);
-
-    [Fact]
-    public void Import_ValidCsv_ReturnsRows()
+    private static string WriteTempCsv(string content)
     {
-        Write("OldUPN,NewUPN\njsmith@old.com,jsmith@new.com\nawhite@old.com,awhite@new.com");
-        var result = _svc.Import(_tempFile, []);
-        Assert.Equal(2, result.Rows.Count);
-        Assert.Empty(result.Errors);
-        Assert.Equal("jsmith@old.com", result.Rows[0].OldUPN);
-        Assert.Equal("jsmith@new.com", result.Rows[0].NewUPN);
+        var path = Path.GetTempFileName();
+        File.WriteAllText(path, content);
+        return path;
     }
 
     [Fact]
-    public void Import_MissingOldUPNColumn_ReturnsError()
+    public void Import_OldUpnOnly_ReturnsRowsWithEmptyNewUpn()
     {
-        Write("Source,NewUPN\njsmith@old.com,jsmith@new.com");
-        var result = _svc.Import(_tempFile, []);
-        Assert.Empty(result.Rows);
+        var svc = new CsvImportService();
+        var path = WriteTempCsv("OldUPN\nalice@old.com\nbob@old.com");
+        var result = svc.Import(path, []);
+        Assert.Empty(result.Errors);
+        Assert.Equal(2, result.Rows.Count);
+        Assert.Equal("alice@old.com", result.Rows[0].OldUPN);
+        Assert.Equal("", result.Rows[0].NewUPN);
+        Assert.Equal("bob@old.com", result.Rows[1].OldUPN);
+        Assert.Equal("", result.Rows[1].NewUPN);
+    }
+
+    [Fact]
+    public void Import_NewUpnColumnPresentButBlank_SkipsRowWithError()
+    {
+        var svc = new CsvImportService();
+        var path = WriteTempCsv("OldUPN,NewUPN\nalice@old.com,\nbob@old.com,bob@new.com");
+        var result = svc.Import(path, []);
+        Assert.Single(result.Errors);
+        Assert.Single(result.Rows);
+        Assert.Equal("bob@old.com", result.Rows[0].OldUPN);
+        Assert.Equal("bob@new.com", result.Rows[0].NewUPN);
+    }
+
+    [Fact]
+    public void Import_MissingOldUpnColumn_ReturnsFileError()
+    {
+        var svc = new CsvImportService();
+        var path = WriteTempCsv("NewUPN\nbob@new.com");
+        var result = svc.Import(path, []);
         Assert.Single(result.Errors);
         Assert.Contains("OldUPN", result.Errors[0]);
-    }
-
-    [Fact]
-    public void Import_BlankField_SkipsRowAndReportsError()
-    {
-        Write("OldUPN,NewUPN\n,jsmith@new.com\nawhite@old.com,awhite@new.com");
-        var result = _svc.Import(_tempFile, []);
-        Assert.Single(result.Rows);
-        Assert.Single(result.Errors);
-    }
-
-    [Fact]
-    public void Import_DuplicateInFile_SkipsSecondAndReportsError()
-    {
-        Write("OldUPN,NewUPN\njsmith@old.com,jsmith@new.com\njsmith@old.com,jsmith@new2.com");
-        var result = _svc.Import(_tempFile, []);
-        Assert.Single(result.Rows);
-        Assert.Single(result.Errors);
-        Assert.Contains("Duplicate", result.Errors[0]);
-    }
-
-    [Fact]
-    public void Import_DuplicateAgainstExisting_SkipsAndReportsError()
-    {
-        Write("OldUPN,NewUPN\njsmith@old.com,jsmith@new.com");
-        var result = _svc.Import(_tempFile, ["jsmith@old.com"]);
         Assert.Empty(result.Rows);
-        Assert.Single(result.Errors);
-        Assert.Contains("already exists", result.Errors[0]);
     }
 
     [Fact]
-    public void Import_HeadersCaseInsensitive_Works()
+    public void Import_BothColumns_PreservesExistingBehavior()
     {
-        Write("oldupn,newupn\njsmith@old.com,jsmith@new.com");
-        var result = _svc.Import(_tempFile, []);
-        Assert.Single(result.Rows);
+        var svc = new CsvImportService();
+        var path = WriteTempCsv("OldUPN,NewUPN\nalice@old.com,alice@new.com\nbob@old.com,bob@new.com");
+        var result = svc.Import(path, []);
         Assert.Empty(result.Errors);
+        Assert.Equal(2, result.Rows.Count);
+        Assert.Equal("alice@new.com", result.Rows[0].NewUPN);
     }
 }

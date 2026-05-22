@@ -32,12 +32,13 @@ public class CsvImportService
             string? oldHeader = headers.FirstOrDefault(h => h.Equals("OldUPN", StringComparison.OrdinalIgnoreCase));
             string? newHeader = headers.FirstOrDefault(h => h.Equals("NewUPN", StringComparison.OrdinalIgnoreCase));
 
-            if (oldHeader is null || newHeader is null)
+            if (oldHeader is null)
             {
-                errors.Add("CSV must contain columns 'OldUPN' and 'NewUPN'.");
+                errors.Add("CSV must contain an 'OldUPN' column.");
                 return new CsvImportResult(rows, errors);
             }
 
+            bool hasNewUpnColumn = newHeader is not null;
             var seenInBatch = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             int rowNum = 1;
 
@@ -45,11 +46,18 @@ public class CsvImportService
             {
                 rowNum++;
                 string oldUpn = csv.GetField<string>(oldHeader)?.Trim() ?? string.Empty;
-                string newUpn = csv.GetField<string>(newHeader)?.Trim() ?? string.Empty;
+                string newUpn = hasNewUpnColumn
+                    ? csv.GetField<string>(newHeader!)?.Trim() ?? string.Empty
+                    : string.Empty;
 
-                if (string.IsNullOrEmpty(oldUpn) || string.IsNullOrEmpty(newUpn))
+                if (string.IsNullOrEmpty(oldUpn))
                 {
-                    errors.Add($"Row {rowNum}: OldUPN and NewUPN cannot be blank.");
+                    errors.Add($"Row {rowNum}: OldUPN cannot be blank.");
+                    continue;
+                }
+                if (hasNewUpnColumn && string.IsNullOrEmpty(newUpn))
+                {
+                    errors.Add($"Row {rowNum}: NewUPN cannot be blank.");
                     continue;
                 }
                 if (seenInBatch.Contains(oldUpn))

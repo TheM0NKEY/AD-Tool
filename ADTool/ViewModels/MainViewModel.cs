@@ -22,7 +22,7 @@ public class MainViewModel : BaseViewModel
 
     public MainViewModel(IAdService adService, CsvImportService csvService)
     {
-        var step1 = new Step1InputViewModel(Entries, csvService, () => GoTo(2));
+        var step1 = new Step1InputViewModel(Entries, csvService, adService, () => GoTo(2));
         var step2 = new Step2ValidateViewModel(Entries, adService, () => GoTo(1), () => GoTo(3));
         var step3 = new Step3PreviewViewModel(Entries, () => GoTo(2), () => GoTo(4));
         var step4 = new Step4ExecuteViewModel(Entries, adService, () => Reset());

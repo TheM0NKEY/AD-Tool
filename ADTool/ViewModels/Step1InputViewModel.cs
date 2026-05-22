@@ -1,5 +1,6 @@
 using ADTool.Models;
 using ADTool.Services;
+using ADTool.Views;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -10,6 +11,7 @@ public class Step1InputViewModel : BaseViewModel
 {
     private readonly ObservableCollection<UPNChangeEntry> _entries;
     private readonly CsvImportService _csvService;
+    private readonly IAdService _adService;
     private readonly Action _onNext;
     private string _oldSuffix = string.Empty;
     private string _newSuffix = string.Empty;
@@ -29,6 +31,7 @@ public class Step1InputViewModel : BaseViewModel
     }
 
     public RelayCommand ImportCsvCommand { get; }
+    public RelayCommand OpenAdBrowserCommand { get; }
     public RelayCommand ApplySuffixSwapCommand { get; }
     public RelayCommand AddRowCommand { get; }
     public RelayCommand<UPNChangeEntry> DeleteRowCommand { get; }
@@ -37,13 +40,16 @@ public class Step1InputViewModel : BaseViewModel
     public Step1InputViewModel(
         ObservableCollection<UPNChangeEntry> entries,
         CsvImportService csvService,
+        IAdService adService,
         Action onNext)
     {
         _entries = entries;
         _csvService = csvService;
+        _adService = adService;
         _onNext = onNext;
 
         ImportCsvCommand = new RelayCommand(ImportCsv);
+        OpenAdBrowserCommand = new RelayCommand(OpenAdBrowser);
         ApplySuffixSwapCommand = new RelayCommand(ApplySuffixSwap, CanApplySuffixSwap);
         AddRowCommand = new RelayCommand(() => _entries.Add(new UPNChangeEntry()));
         DeleteRowCommand = new RelayCommand<UPNChangeEntry>(e => { if (e != null) _entries.Remove(e); });
@@ -76,6 +82,24 @@ public class Step1InputViewModel : BaseViewModel
         if (result.Errors.Count > 0)
             MessageBox.Show(string.Join("\n", result.Errors), "Import warnings",
                 MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
+    private void OpenAdBrowser()
+    {
+        var vm = new AdBrowserViewModel(_adService, AddUsersFromBrowser);
+        var dialog = new AdBrowserDialog(vm) { Owner = Application.Current.MainWindow };
+        dialog.ShowDialog();
+    }
+
+    private void AddUsersFromBrowser(IReadOnlyList<AdUser> users)
+    {
+        var existingUpns = new HashSet<string>(_entries.Select(e => e.OldUPN), StringComparer.OrdinalIgnoreCase);
+        foreach (var user in users)
+        {
+            if (existingUpns.Contains(user.UPN)) continue;
+            _entries.Add(new UPNChangeEntry { OldUPN = user.UPN, NewUPN = string.Empty });
+            existingUpns.Add(user.UPN);
+        }
     }
 
     private void Next()

@@ -1,6 +1,7 @@
 using ADTool.Models;
 using ADTool.Services;
 using ADTool.ViewModels;
+using Moq;
 using System.Collections.ObjectModel;
 
 namespace ADTool.Tests;
@@ -9,11 +10,12 @@ public class Step1InputViewModelTests
 {
     private ObservableCollection<UPNChangeEntry> Entries() => new();
     private CsvImportService Csv() => new();
+    private IAdService Ad() => new Mock<IAdService>().Object;
 
     [Fact]
     public void NextCommand_DisabledWhenEntriesEmpty()
     {
-        var vm = new Step1InputViewModel(Entries(), Csv(), () => { });
+        var vm = new Step1InputViewModel(Entries(), Csv(), Ad(), () => { });
         Assert.False(vm.NextCommand.CanExecute(null));
     }
 
@@ -21,7 +23,7 @@ public class Step1InputViewModelTests
     public void NextCommand_EnabledWhenEntriesHasItems()
     {
         var entries = Entries();
-        var vm = new Step1InputViewModel(entries, Csv(), () => { });
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
         entries.Add(new UPNChangeEntry { OldUPN = "a@b.com", NewUPN = "a@c.com" });
         Assert.True(vm.NextCommand.CanExecute(null));
     }
@@ -32,7 +34,7 @@ public class Step1InputViewModelTests
         var entries = Entries();
         entries.Add(new UPNChangeEntry { OldUPN = "a@b.com", NewUPN = "a@c.com", ValidationStatus = ValidationStatus.Valid });
         bool nextCalled = false;
-        var vm = new Step1InputViewModel(entries, Csv(), () => nextCalled = true);
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => nextCalled = true);
 
         vm.NextCommand.Execute(null);
 
@@ -45,7 +47,7 @@ public class Step1InputViewModelTests
     {
         var entries = Entries();
         entries.Add(new UPNChangeEntry { OldUPN = "jsmith@old.com", NewUPN = "jsmith@old.com" });
-        var vm = new Step1InputViewModel(entries, Csv(), () => { });
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
         vm.OldSuffix = "@old.com";
         vm.NewSuffix = "@new.com";
 
@@ -57,7 +59,7 @@ public class Step1InputViewModelTests
     [Fact]
     public void ApplySuffixSwap_DisabledWhenSuffixesEmpty()
     {
-        var vm = new Step1InputViewModel(Entries(), Csv(), () => { });
+        var vm = new Step1InputViewModel(Entries(), Csv(), Ad(), () => { });
         Assert.False(vm.ApplySuffixSwapCommand.CanExecute(null));
     }
 
@@ -67,7 +69,7 @@ public class Step1InputViewModelTests
         var entries = Entries();
         var entry = new UPNChangeEntry { OldUPN = "a@b.com", NewUPN = "a@c.com" };
         entries.Add(entry);
-        var vm = new Step1InputViewModel(entries, Csv(), () => { });
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
 
         vm.DeleteRowCommand.Execute(entry);
 
@@ -78,7 +80,7 @@ public class Step1InputViewModelTests
     public void AddRowCommand_AddsBlankEntry()
     {
         var entries = Entries();
-        var vm = new Step1InputViewModel(entries, Csv(), () => { });
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
 
         vm.AddRowCommand.Execute(null);
 
@@ -90,7 +92,7 @@ public class Step1InputViewModelTests
     {
         var entries = Entries();
         entries.Add(new UPNChangeEntry { OldUPN = "user@wrong.com", NewUPN = "user@wrong.com" });
-        var vm = new Step1InputViewModel(entries, Csv(), () => { });
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
         vm.OldSuffix = "@old.com";
         vm.NewSuffix = "@new.com";
 

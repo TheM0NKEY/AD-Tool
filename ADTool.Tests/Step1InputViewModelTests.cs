@@ -100,4 +100,44 @@ public class Step1InputViewModelTests
 
         Assert.Equal("user@wrong.com", entries[0].NewUPN);
     }
+
+    [Fact]
+    public void AddUsersFromBrowser_AddsUsersWithEmptyNewUpn()
+    {
+        var entries = Entries();
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
+
+        vm.AddUsersFromBrowser([new AdUser("alice@c.com", "Alice"), new AdUser("bob@c.com", "Bob")]);
+
+        Assert.Equal(2, entries.Count);
+        Assert.Equal("alice@c.com", entries[0].OldUPN);
+        Assert.Equal(string.Empty, entries[0].NewUPN);
+        Assert.Equal("bob@c.com", entries[1].OldUPN);
+        Assert.Equal(string.Empty, entries[1].NewUPN);
+    }
+
+    [Fact]
+    public void AddUsersFromBrowser_SkipsDuplicatesAgainstExistingEntries()
+    {
+        var entries = Entries();
+        entries.Add(new UPNChangeEntry { OldUPN = "alice@c.com" });
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
+
+        vm.AddUsersFromBrowser([new AdUser("alice@c.com", "Alice"), new AdUser("bob@c.com", "Bob")]);
+
+        Assert.Equal(2, entries.Count);
+        Assert.Equal("bob@c.com", entries[1].OldUPN);
+    }
+
+    [Fact]
+    public void AddUsersFromBrowser_SkipsDuplicatesWithinIncomingBatch()
+    {
+        var entries = Entries();
+        var vm = new Step1InputViewModel(entries, Csv(), Ad(), () => { });
+
+        vm.AddUsersFromBrowser([new AdUser("alice@c.com", "Alice"), new AdUser("ALICE@c.com", "Alice2")]);
+
+        Assert.Single(entries);
+        Assert.Equal("alice@c.com", entries[0].OldUPN);
+    }
 }

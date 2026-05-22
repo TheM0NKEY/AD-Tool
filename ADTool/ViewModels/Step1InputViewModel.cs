@@ -87,11 +87,11 @@ public class Step1InputViewModel : BaseViewModel
     private void OpenAdBrowser()
     {
         var vm = new AdBrowserViewModel(_adService, AddUsersFromBrowser);
-        var dialog = new AdBrowserDialog(vm) { Owner = Application.Current.MainWindow };
+        var dialog = new AdBrowserDialog(vm) { Owner = Application.Current?.MainWindow };
         dialog.ShowDialog();
     }
 
-    private void AddUsersFromBrowser(IReadOnlyList<AdUser> users)
+    internal void AddUsersFromBrowser(IReadOnlyList<AdUser> users)
     {
         var existingUpns = new HashSet<string>(_entries.Select(e => e.OldUPN), StringComparer.OrdinalIgnoreCase);
         foreach (var user in users)

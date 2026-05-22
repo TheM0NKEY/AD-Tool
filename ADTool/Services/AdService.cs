@@ -80,9 +80,8 @@ public class AdService : IAdService
         {
             try
             {
-                using var ctx = new PrincipalContext(ContextType.Domain);
                 using var user = UserPrincipal.Current;
-                var groups = user.GetAuthorizationGroups();
+                using var groups = user.GetAuthorizationGroups();
                 return groups.Any(g => g.Name.Equals("Domain Admins", StringComparison.OrdinalIgnoreCase));
             }
             catch
@@ -102,8 +101,9 @@ public class AdService : IAdService
                 string defaultNC = rootDse.Properties["defaultNamingContext"][0]!.ToString()!;
                 string rootName = string.Join(".", defaultNC
                     .Split(',')
-                    .Where(p => p.TrimStart().StartsWith("DC=", StringComparison.OrdinalIgnoreCase))
-                    .Select(p => p.TrimStart()[3..]));
+                    .Select(p => p.TrimStart())
+                    .Where(p => p.StartsWith("DC=", StringComparison.OrdinalIgnoreCase))
+                    .Select(p => p[3..]));
                 var children = GetOuChildren(defaultNC);
                 return (IReadOnlyList<OuNode>)[new OuNode(rootName, defaultNC, children)];
             }
@@ -149,15 +149,17 @@ public class AdService : IAdService
         });
     }
 
-    private static IReadOnlyList<OuNode> GetOuChildren(string parentDn)
+    private static IReadOnlyList<OuNode> GetOuChildren(string parentDn, int depth = 0)
     {
+        if (depth > 50) return Array.Empty<OuNode>();
         try
         {
             using var entry = new DirectoryEntry($"LDAP://{parentDn}");
             using var searcher = new DirectorySearcher(entry)
             {
                 Filter = "(objectClass=organizationalUnit)",
-                SearchScope = SearchScope.OneLevel
+                SearchScope = SearchScope.OneLevel,
+                PageSize = 1000
             };
             searcher.PropertiesToLoad.AddRange(new[] { "name", "distinguishedName" });
 
@@ -167,7 +169,7 @@ public class AdService : IAdService
             {
                 string dn = result.Properties["distinguishedName"][0]?.ToString() ?? "";
                 string name = result.Properties["name"][0]?.ToString() ?? dn;
-                nodes.Add(new OuNode(name, dn, GetOuChildren(dn)));
+                nodes.Add(new OuNode(name, dn, GetOuChildren(dn, depth + 1)));
             }
             return nodes;
         }

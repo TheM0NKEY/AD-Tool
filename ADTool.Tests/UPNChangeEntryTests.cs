@@ -81,4 +81,11 @@ public class UPNChangeEntryTests
 
         Assert.Contains(nameof(UPNChangeEntry.MailNickname), fired);
     }
+
+    [Fact]
+    public void MailNickname_LeadingAtSign_ReturnsFullValue()
+    {
+        var entry = new UPNChangeEntry { NewUPN = "@contoso.com" };
+        Assert.Equal("@contoso.com", entry.MailNickname);
+    }
 }

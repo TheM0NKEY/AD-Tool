@@ -33,7 +33,14 @@ public class UPNChangeEntry : INotifyPropertyChanged
         }
     }
 
-    public string MailNickname => NewUPN.Contains('@') ? NewUPN.Split('@')[0] : NewUPN;
+    public string MailNickname
+    {
+        get
+        {
+            var at = NewUPN.IndexOf('@');
+            return at > 0 ? NewUPN[..at] : NewUPN;
+        }
+    }
 
     public string? DisplayName
     {

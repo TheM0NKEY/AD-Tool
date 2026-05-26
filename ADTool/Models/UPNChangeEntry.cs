@@ -25,8 +25,15 @@ public class UPNChangeEntry : INotifyPropertyChanged
     public string NewUPN
     {
         get => _newUpn;
-        set { _newUpn = value; OnPropertyChanged(); }
+        set
+        {
+            _newUpn = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(MailNickname));
+        }
     }
+
+    public string MailNickname => NewUPN.Contains('@') ? NewUPN.Split('@')[0] : NewUPN;
 
     public string? DisplayName
     {

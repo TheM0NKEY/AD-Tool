@@ -97,6 +97,8 @@ Review the full list of changes before anything is written. The grid shows:
 | New UPN | The new UPN that will be set |
 | Proxy address added | `smtp:OldUPN` — the old address demoted to secondary |
 | New primary SMTP | `SMTP:NewUPN` — the new address promoted to primary |
+| mail | Set to `NewUPN` — keeps the primary email attribute in sync for M365 and on-premises applications |
+| mailNickname | Set to the prefix of `NewUPN` (before `@`) — the Exchange alias synced to Entra ID by Entra Connect |
 
 Click **Back** to return to Step 2, or **Execute Changes** to proceed.
 
@@ -109,6 +111,8 @@ Changes are applied sequentially. For each user, the tool:
 1. Sets `userPrincipalName` to the new UPN
 2. Demotes the old primary SMTP proxy address (`SMTP:oldUPN` → `smtp:oldUPN`)
 3. Adds the new UPN as the primary SMTP proxy address (`SMTP:newUPN`)
+4. Sets `mail` to the new UPN
+5. Sets `mailNickname` to the prefix of the new UPN (the part before `@`)
 
 Each row shows a success (✔) or failure (✘) indicator. Failures expand to show a title and detail message. If technical details are available (e.g. an exception message from AD), a nested **Technical details** expander provides the raw error.
 

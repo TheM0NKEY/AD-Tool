@@ -51,6 +51,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="mail"         Binding="{Binding NewUPN}"       Width="*"/>
+                <DataGridTextColumn Header="mailNickname" Binding="{Binding MailNickname}"  Width="150"/>
             </DataGrid.Columns>
         </DataGrid>
 

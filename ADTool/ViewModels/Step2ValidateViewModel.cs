@@ -54,7 +54,22 @@ public class Step2ValidateViewModel : BaseViewModel
         ValidatedCount = 0;
         OnPropertyChanged(nameof(TotalCount));
 
-        var tasks = _entries.Select(async entry =>
+        var batchDuplicates = _entries
+            .GroupBy(e => e.NewUPN, StringComparer.OrdinalIgnoreCase)
+            .Where(g => g.Count() > 1)
+            .SelectMany(g => g)
+            .ToHashSet();
+
+        foreach (var entry in batchDuplicates)
+        {
+            entry.ValidationStatus = ValidationStatus.DuplicateNewUPN;
+            (entry.ErrorTitle, entry.ErrorDetail) =
+                ErrorMessages.ForValidationFailure(ValidationType.DuplicateNewUPN, entry.OldUPN, entry.NewUPN);
+            Interlocked.Increment(ref _validatedCount);
+            OnPropertyChanged(nameof(ValidatedCount));
+        }
+
+        var tasks = _entries.Where(e => !batchDuplicates.Contains(e)).Select(async entry =>
         {
             var result = await _adService.ValidateUserAsync(entry.OldUPN, entry.NewUPN);
             entry.DisplayName = result.DisplayName;

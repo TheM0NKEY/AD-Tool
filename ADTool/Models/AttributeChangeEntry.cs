@@ -49,7 +49,7 @@ public class AttributeChangeEntry : INotifyPropertyChanged
     }
 
     // LDAP attribute name → value to write. Empty/null values are skipped at execute time.
-    public Dictionary<string, string?> Attributes { get; set; } = new();
+    public Dictionary<string, string?> Attributes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

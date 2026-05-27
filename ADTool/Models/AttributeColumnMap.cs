@@ -48,6 +48,7 @@ public static class AttributeColumnMap
             ["Phone"]             = "telephoneNumber",
             ["Manager"]           = "manager",
             ["EmployeeID"]        = "employeeID",
+            ["Employee ID"]       = "employeeID",
             ["CustomAttribute1"]  = "extensionAttribute1",
             ["CustomAttribute2"]  = "extensionAttribute2",
             ["CustomAttribute3"]  = "extensionAttribute3",

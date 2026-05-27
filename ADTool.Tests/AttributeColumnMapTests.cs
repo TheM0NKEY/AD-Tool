@@ -23,6 +23,8 @@ public class AttributeColumnMapTests
     [InlineData("Phone",        "telephoneNumber")]
     [InlineData("Manager",      "manager")]
     [InlineData("Description",  "description")]
+    [InlineData("EmployeeID",   "employeeID")]
+    [InlineData("Employee ID",  "employeeID")]
     public void Resolve_WellKnownHeader_ReturnsLdapName(string header, string expectedLdap)
     {
         Assert.Equal(expectedLdap, AttributeColumnMap.Resolve(header));

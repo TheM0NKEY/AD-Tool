@@ -91,7 +91,7 @@ public class Step4ExecuteViewModel : BaseViewModel
     }
 
     private static string Escape(string v) =>
-        v.Contains(',') || v.Contains('"') || v.Contains('\n')
+        v.Contains(',') || v.Contains('"') || v.Contains('\n') || v.Contains('\r')
             ? $"\"{v.Replace("\"", "\"\"")}\""
             : v;
 }

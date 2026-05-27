@@ -42,4 +42,13 @@ public class AdServiceStub : IAdService
         ];
         return Task.FromResult(users);
     }
+
+    public Task<ValidationResult> ValidateUserExistsAsync(string upn)
+    {
+        string displayName = $"[Stub] {(upn.Contains('@') ? upn.Split('@')[0] : upn)}";
+        return Task.FromResult(new ValidationResult(true, displayName));
+    }
+
+    public Task<ExecutionResult> UpdateAttributesAsync(string upn, Dictionary<string, string> attributes)
+        => Task.FromResult(new ExecutionResult(true));
 }

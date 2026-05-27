@@ -23,4 +23,6 @@ public interface IAdService
     Task<bool> CheckIsDomainAdminAsync();
     Task<IReadOnlyList<OuNode>> GetOuTreeAsync();
     Task<IReadOnlyList<AdUser>> GetUsersInOuAsync(string ouDistinguishedName);
+    Task<ValidationResult> ValidateUserExistsAsync(string upn);
+    Task<ExecutionResult> UpdateAttributesAsync(string upn, Dictionary<string, string> attributes);
 }

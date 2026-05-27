@@ -152,6 +152,55 @@ public class AdService : IAdService
         });
     }
 
+    public async Task<ValidationResult> ValidateUserExistsAsync(string upn)
+    {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                using var ctx = new PrincipalContext(ContextType.Domain);
+                using var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, upn);
+                if (user is null)
+                    return new ValidationResult(false, null, ValidationType.UserNotFound);
+                return new ValidationResult(true, user.DisplayName);
+            }
+            catch (Exception ex)
+            {
+                return new ValidationResult(false, null, ValidationType.UserNotFound, ex.Message);
+            }
+        });
+    }
+
+    public async Task<ExecutionResult> UpdateAttributesAsync(string upn, Dictionary<string, string> attributes)
+    {
+        return await Task.Run(() =>
+        {
+            try
+            {
+                using var ctx = new PrincipalContext(ContextType.Domain);
+                using var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, upn);
+                if (user is null)
+                    return new ExecutionResult(false, ExecutionErrorType.UnexpectedError,
+                        "User not found at execution time.");
+
+                var de = (DirectoryEntry)user.GetUnderlyingObject();
+                foreach (var (ldapName, value) in attributes)
+                    de.Properties[ldapName].Value = value;
+                de.CommitChanges();
+
+                return new ExecutionResult(true);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return new ExecutionResult(false, ExecutionErrorType.InsufficientPermissions, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return new ExecutionResult(false, ExecutionErrorType.UnexpectedError, ex.Message);
+            }
+        });
+    }
+
     private static IReadOnlyList<OuNode> GetOuChildren(string parentDn, int depth = 0)
     {
         if (depth > 50) return Array.Empty<OuNode>();

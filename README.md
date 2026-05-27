@@ -22,7 +22,7 @@ Double-click `ADTool.exe`, or launch from the command line:
 ADTool.exe
 ```
 
-The tool checks at startup whether the current user is a member of the **Domain Admins** group. If not, access is denied and the tool exits.
+The tool opens to a home screen where you choose between the **UPN Bulk Modifier** and the **Attribute Editor**. It checks at startup whether the current user is a member of the **Domain Admins** group. If not, access is denied and the tool exits.
 
 To run in **dry-run mode** (no changes written to AD):
 
@@ -119,6 +119,44 @@ Each row shows a success (✔) or failure (✘) indicator. Failures expand to sh
 **Export CSV** saves a results file with columns: `OldUPN`, `NewUPN`, `DisplayName`, `Status`, `ErrorTitle`, `ErrorDetail`.
 
 **Start New Run** clears all data and returns to Step 1.
+
+---
+
+### Attribute Editor
+
+A separate tool accessible from the home screen for bulk-setting AD attributes across many users in a single run.
+
+#### Supported attributes
+
+| CSV column header | AD attribute |
+|---|---|
+| `UPN` or `UserPrincipalName` | Identity (not written) |
+| `Department` | `department` |
+| `Description` | `description` |
+| `Title` | `title` |
+| `Company` | `company` |
+| `Office` | `physicalDeliveryOfficeName` |
+| `Phone` | `telephoneNumber` |
+| `Manager` | `manager` |
+| `EmployeeID` | `employeeID` |
+| `CustomAttribute1`–`CustomAttribute15` | `extensionAttribute1`–`extensionAttribute15` |
+| Any other column header | Used verbatim as the LDAP attribute name |
+
+Blank cells in a row are skipped — only non-blank values are written to AD.
+
+#### Workflow
+
+**Step 1 — Input.** Populate users and attribute values using any combination of:
+- **Import CSV** — a CSV with a `UPN` column and any attribute columns from the table above
+- **Browse AD…** — select users from the AD OU tree (same dialog as the UPN Modifier)
+- **Add Column** — pick from the well-known attribute list or enter a raw LDAP name
+- **Add Row** — type a UPN directly into the grid
+
+**Step 2 — Validate.** Confirms each user exists in AD. Duplicate UPNs within the same batch are flagged without querying AD.
+
+**Step 3 — Preview.** Shows a grid with one column per attribute to be written. Review before committing.
+
+**Step 4 — Execute.** Writes all non-blank attribute values via `DirectoryEntry.CommitChanges()`. **Export CSV** columns: `UPN`, `DisplayName`, `Status`, `ErrorTitle`, `ErrorDetail`. **Start New Run** returns to the home screen.
 
 ---
 

@@ -1,0 +1,42 @@
+<UserControl x:Class="ADTool.Views.UPNToolView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ADTool.ViewModels"
+             xmlns:views="clr-namespace:ADTool.Views">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type vm:Step1InputViewModel}">
+            <views:Step1InputView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:Step2ValidateViewModel}">
+            <views:Step2ValidateView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:Step3PreviewViewModel}">
+            <views:Step3PreviewView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:Step4ExecuteViewModel}">
+            <views:Step4ExecuteView />
+        </DataTemplate>
+        <Style x:Key="StepLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="4,0"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Background="#2D2D30" Padding="16,8">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="1  Input"    Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
+                <TextBlock Text=" › "          Foreground="#555"    Style="{StaticResource StepLabel}"/>
+                <TextBlock Text="2  Validate" Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
+                <TextBlock Text=" › "          Foreground="#555"    Style="{StaticResource StepLabel}"/>
+                <TextBlock Text="3  Preview"  Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
+                <TextBlock Text=" › "          Foreground="#555"    Style="{StaticResource StepLabel}"/>
+                <TextBlock Text="4  Execute"  Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
+            </StackPanel>
+        </Border>
+        <ContentControl Grid.Row="1" Content="{Binding CurrentStep}" Margin="16"/>
+    </Grid>
+</UserControl>

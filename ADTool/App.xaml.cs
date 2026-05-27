@@ -1,4 +1,4 @@
-﻿using ADTool.Services;
+using ADTool.Services;
 using ADTool.ViewModels;
 using ADTool.Views;
 using System.Windows;
@@ -29,10 +29,8 @@ public partial class App : Application
             }
         }
 
-        var mainVm = new MainViewModel(adService, new CsvImportService());
-        var window = new MainWindow { DataContext = mainVm };
+        var shellVm = new AppShellViewModel(adService, new CsvImportService());
+        var window = new MainWindow { DataContext = shellVm };
         window.Show();
     }
 }
-
-

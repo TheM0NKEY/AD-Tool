@@ -3,51 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ADTool.ViewModels"
         xmlns:views="clr-namespace:ADTool.Views"
-        Title="AD UPN Bulk Modifier"
+        Title="{Binding WindowTitle}"
         Height="640" Width="960"
         MinHeight="480" MinWidth="720"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <DataTemplate DataType="{x:Type vm:Step1InputViewModel}">
-            <views:Step1InputView />
+        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+            <views:HomeView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:Step2ValidateViewModel}">
-            <views:Step2ValidateView />
+        <DataTemplate DataType="{x:Type vm:UPNToolViewModel}">
+            <views:UPNToolView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:Step3PreviewViewModel}">
-            <views:Step3PreviewView />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:Step4ExecuteViewModel}">
-            <views:Step4ExecuteView />
-        </DataTemplate>
-
-        <Style x:Key="StepLabel" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Margin" Value="4,0"/>
-        </Style>
+        <!-- AttributeToolViewModel DataTemplate added in Task 8 -->
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <!-- Step indicator bar -->
-        <Border Grid.Row="0" Background="#2D2D30" Padding="16,8">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="1  Input" Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text=" › " Foreground="#555" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text="2  Validate" Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text=" › " Foreground="#555" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text="3  Preview" Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text=" › " Foreground="#555" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text="4  Execute" Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Active step view (resolved by DataTemplate above) -->
-        <ContentControl Grid.Row="1" Content="{Binding CurrentStep}" Margin="16"/>
-    </Grid>
+    <ContentControl Content="{Binding CurrentView}"/>
 </Window>

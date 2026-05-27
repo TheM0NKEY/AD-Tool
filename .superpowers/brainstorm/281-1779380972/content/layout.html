@@ -1,0 +1,93 @@
+<h2>Which layout works best for this tool?</h2>
+<p class="subtitle">All three cover the same features — they differ in how you navigate through them</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:11px;background:#1e1e2e;color:#cdd6f4;padding:10px;border-radius:4px;line-height:1.6">
+        <div style="background:#313244;padding:4px 8px;border-radius:3px;margin-bottom:6px;color:#89b4fa">
+          AD UPN Bulk Modifier &nbsp;|&nbsp; <span style="color:#a6e3a1">Step 2 of 4: Validate</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <div style="background:#45475a;padding:3px 10px;border-radius:3px;color:#6c7086">1 Input</div>
+          <div style="background:#89b4fa;padding:3px 10px;border-radius:3px;color:#1e1e2e">2 Validate</div>
+          <div style="background:#45475a;padding:3px 10px;border-radius:3px;color:#6c7086">3 Preview</div>
+          <div style="background:#45475a;padding:3px 10px;border-radius:3px;color:#6c7086">4 Execute</div>
+        </div>
+        <div style="background:#313244;padding:6px;border-radius:3px;font-size:10px">
+          <div style="color:#a6e3a1">✔ jsmith@old.com → found in AD</div>
+          <div style="color:#f38ba8">✘ baduser@old.com → not found</div>
+          <div style="color:#a6e3a1">✔ awhite@old.com → found in AD</div>
+        </div>
+        <div style="margin-top:6px;text-align:right">
+          <span style="background:#89b4fa;color:#1e1e2e;padding:3px 12px;border-radius:3px">Next: Preview →</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Wizard (step-by-step)</h3>
+      <p>Guided flow: Input → Validate → Preview → Execute. Each step must be completed before proceeding. Enforces the correct order.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:11px;background:#1e1e2e;color:#cdd6f4;padding:10px;border-radius:4px;line-height:1.6">
+        <div style="background:#313244;padding:4px 8px;border-radius:3px;margin-bottom:6px;display:flex;gap:12px">
+          <span style="border-bottom:2px solid #89b4fa;color:#89b4fa">Input</span>
+          <span style="color:#6c7086">Validation</span>
+          <span style="color:#6c7086">Preview</span>
+          <span style="color:#6c7086">Results</span>
+        </div>
+        <div style="background:#313244;padding:6px;border-radius:3px;font-size:10px;margin-bottom:4px">
+          <div style="color:#cba6f7">Old UPN suffix: @old.com &nbsp; New: @new.com &nbsp; [Apply Bulk Swap]</div>
+        </div>
+        <div style="background:#313244;padding:4px;border-radius:3px;font-size:10px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;color:#6c7086">
+            <span>Old UPN</span><span>New UPN</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
+            <span>jsmith@old.com</span><span>jsmith@new.com</span>
+          </div>
+        </div>
+        <div style="margin-top:6px;display:flex;gap:4px">
+          <span style="background:#89b4fa;color:#1e1e2e;padding:2px 8px;border-radius:3px">Validate</span>
+          <span style="background:#45475a;color:#6c7086;padding:2px 8px;border-radius:3px">Preview</span>
+          <span style="background:#45475a;color:#6c7086;padding:2px 8px;border-radius:3px">Execute</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Tabbed</h3>
+      <p>Input, Validation, Preview, and Results each get a tab. You navigate freely but buttons enforce the sequence.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:11px;background:#1e1e2e;color:#cdd6f4;padding:10px;border-radius:4px;line-height:1.6">
+        <div style="background:#313244;padding:4px 8px;border-radius:3px;margin-bottom:4px;color:#cba6f7;font-size:10px">
+          [Import CSV] &nbsp; Old suffix: @old.com → New: @new.com &nbsp; [Apply]
+        </div>
+        <div style="background:#313244;padding:4px;border-radius:3px;font-size:10px;margin-bottom:4px">
+          <div style="color:#6c7086">Old UPN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; New UPN</div>
+          <div>jsmith@old.com &nbsp; jsmith@new.com</div>
+          <div>awhite@old.com &nbsp; awhite@new.com</div>
+        </div>
+        <div style="display:flex;gap:4px;margin-bottom:4px">
+          <span style="background:#89b4fa;color:#1e1e2e;padding:2px 8px;border-radius:3px">Validate &amp; Preview</span>
+          <span style="background:#f38ba8;color:#1e1e2e;padding:2px 8px;border-radius:3px">Execute</span>
+        </div>
+        <div style="background:#313244;padding:4px;border-radius:3px;font-size:10px;color:#a6e3a1">
+          ✔ 2 users validated — preview shown below
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Single panel</h3>
+      <p>Everything on one scrollable screen. Input at top, results inline below. Less ceremony, faster to use once you know the tool.</p>
+    </div>
+  </div>
+
+</div>

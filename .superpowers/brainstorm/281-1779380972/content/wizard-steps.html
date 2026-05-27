@@ -1,0 +1,155 @@
+<h2>Wizard Step Designs</h2>
+<p class="subtitle">Four steps — click through each to review the layout</p>
+
+<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+  <button onclick="showStep(1)" id="btn1" style="padding:6px 14px;border-radius:4px;border:none;background:#89b4fa;color:#1e1e2e;cursor:pointer;font-size:13px">Step 1: Input</button>
+  <button onclick="showStep(2)" id="btn2" style="padding:6px 14px;border-radius:4px;border:none;background:#45475a;color:#cdd6f4;cursor:pointer;font-size:13px">Step 2: Validate</button>
+  <button onclick="showStep(3)" id="btn3" style="padding:6px 14px;border-radius:4px;border:none;background:#45475a;color:#cdd6f4;cursor:pointer;font-size:13px">Step 3: Preview</button>
+  <button onclick="showStep(4)" id="btn4" style="padding:6px 14px;border-radius:4px;border:none;background:#45475a;color:#cdd6f4;cursor:pointer;font-size:13px">Step 4: Execute</button>
+</div>
+
+<!-- Step 1 -->
+<div id="step1" class="mockup">
+  <div class="mockup-header">Step 1 of 4 — Input</div>
+  <div class="mockup-body" style="font-family:monospace;font-size:12px;color:#cdd6f4">
+    <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center">
+      <div style="background:#313244;padding:4px 10px;border-radius:3px;cursor:pointer;color:#89b4fa">📂 Import CSV</div>
+      <div style="color:#6c7086">|</div>
+      <span style="color:#6c7086">Bulk suffix swap:</span>
+      <div style="background:#1e1e2e;border:1px solid #45475a;padding:3px 8px;border-radius:3px;width:120px">@old.contoso.com</div>
+      <span style="color:#6c7086">→</span>
+      <div style="background:#1e1e2e;border:1px solid #45475a;padding:3px 8px;border-radius:3px;width:120px">@new.contoso.com</div>
+      <div style="background:#cba6f7;color:#1e1e2e;padding:3px 10px;border-radius:3px;cursor:pointer">Apply</div>
+    </div>
+    <div style="background:#313244;border-radius:4px;overflow:hidden;margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 40px;background:#45475a;padding:5px 8px;color:#89b4fa;font-size:11px">
+        <span>Old UPN</span><span>New UPN</span><span></span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 40px;padding:4px 8px;border-bottom:1px solid #45475a">
+        <span>jsmith@old.contoso.com</span><span>jsmith@new.contoso.com</span><span style="color:#f38ba8;cursor:pointer">✕</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 40px;padding:4px 8px;border-bottom:1px solid #45475a">
+        <span>awhite@old.contoso.com</span><span>awhite@new.contoso.com</span><span style="color:#f38ba8;cursor:pointer">✕</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 40px;padding:4px 8px;color:#6c7086;font-style:italic">
+        <span>Click to add row...</span><span></span><span></span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="color:#6c7086;font-size:11px">2 entries</span>
+      <div style="background:#a6e3a1;color:#1e1e2e;padding:4px 16px;border-radius:3px;cursor:pointer">Next: Validate →</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2 -->
+<div id="step2" class="mockup" style="display:none">
+  <div class="mockup-header">Step 2 of 4 — Validate</div>
+  <div class="mockup-body" style="font-family:monospace;font-size:12px;color:#cdd6f4">
+    <div style="background:#313244;border-radius:4px;overflow:hidden;margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:24px 1fr 1fr 160px;background:#45475a;padding:5px 8px;color:#89b4fa;font-size:11px">
+        <span></span><span>Old UPN</span><span>New UPN</span><span>Status</span>
+      </div>
+      <div style="display:grid;grid-template-columns:24px 1fr 1fr 160px;padding:4px 8px;border-bottom:1px solid #45475a">
+        <span style="color:#a6e3a1">✔</span><span>jsmith@old.contoso.com</span><span>jsmith@new.contoso.com</span><span style="color:#a6e3a1">Found in AD</span>
+      </div>
+      <div style="display:grid;grid-template-columns:24px 1fr 1fr 160px;padding:4px 8px;border-bottom:1px solid #45475a;background:#2d1b1b">
+        <span style="color:#f38ba8">✘</span><span>baduser@old.contoso.com</span><span>baduser@new.contoso.com</span><span style="color:#f38ba8">Not found in AD</span>
+      </div>
+      <div style="display:grid;grid-template-columns:24px 1fr 1fr 160px;padding:4px 8px">
+        <span style="color:#a6e3a1">✔</span><span>awhite@old.contoso.com</span><span>awhite@new.contoso.com</span><span style="color:#a6e3a1">Found in AD</span>
+      </div>
+    </div>
+    <div style="background:#2a1f10;border:1px solid #f9e2af;border-radius:4px;padding:8px;margin-bottom:10px;font-size:11px">
+      <span style="color:#f9e2af">⚠ 1 user not found. Remove invalid rows before proceeding, or go back to fix them.</span>
+      <div style="margin-top:4px">
+        <span style="background:#f38ba8;color:#1e1e2e;padding:2px 8px;border-radius:3px;cursor:pointer;font-size:11px">Remove invalid rows</span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between">
+      <div style="background:#45475a;color:#cdd6f4;padding:4px 16px;border-radius:3px;cursor:pointer">← Back</div>
+      <div style="background:#a6e3a1;color:#1e1e2e;padding:4px 16px;border-radius:3px;cursor:pointer">Next: Preview →</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3 -->
+<div id="step3" class="mockup" style="display:none">
+  <div class="mockup-header">Step 3 of 4 — Preview Changes</div>
+  <div class="mockup-body" style="font-family:monospace;font-size:12px;color:#cdd6f4">
+    <div style="background:#1a2a1a;border:1px solid #a6e3a1;border-radius:4px;padding:8px;margin-bottom:10px;font-size:11px;color:#a6e3a1">
+      ✔ 2 valid users ready. Review the changes below before executing.
+    </div>
+    <div style="background:#313244;border-radius:4px;overflow:hidden;margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#45475a;padding:5px 8px;color:#89b4fa;font-size:11px">
+        <span>Display Name</span><span>UPN Change</span><span>Proxy Address Added</span>
+      </div>
+      <div style="padding:6px 8px;border-bottom:1px solid #45475a">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr">
+          <span>John Smith</span>
+          <span style="color:#cba6f7">@old → @new.contoso.com</span>
+          <span style="color:#89b4fa">jsmith@old.contoso.com</span>
+        </div>
+      </div>
+      <div style="padding:6px 8px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr">
+          <span>Alice White</span>
+          <span style="color:#cba6f7">@old → @new.contoso.com</span>
+          <span style="color:#89b4fa">awhite@old.contoso.com</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between">
+      <div style="background:#45475a;color:#cdd6f4;padding:4px 16px;border-radius:3px;cursor:pointer">← Back</div>
+      <div style="background:#f38ba8;color:#1e1e2e;padding:4px 20px;border-radius:3px;cursor:pointer;font-weight:bold">Execute Changes</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 4 -->
+<div id="step4" class="mockup" style="display:none">
+  <div class="mockup-header">Step 4 of 4 — Results</div>
+  <div class="mockup-body" style="font-family:monospace;font-size:12px;color:#cdd6f4">
+    <div style="background:#313244;border-radius:4px;overflow:hidden;margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:24px 1fr 200px;background:#45475a;padding:5px 8px;color:#89b4fa;font-size:11px">
+        <span></span><span>User</span><span>Result</span>
+      </div>
+      <div style="padding:6px 8px;border-bottom:1px solid #45475a">
+        <div style="display:grid;grid-template-columns:24px 1fr 200px">
+          <span style="color:#a6e3a1">✔</span>
+          <div><div>John Smith</div><div style="color:#6c7086;font-size:10px">jsmith@old.contoso.com → jsmith@new.contoso.com</div></div>
+          <span style="color:#a6e3a1">UPN updated, proxy added</span>
+        </div>
+      </div>
+      <div style="padding:6px 8px;background:#2d1b1b">
+        <div style="display:grid;grid-template-columns:24px 1fr 200px">
+          <span style="color:#f38ba8">✘</span>
+          <div><div>Alice White</div><div style="color:#6c7086;font-size:10px">awhite@old.contoso.com → awhite@new.contoso.com</div></div>
+          <span style="color:#f38ba8">Failed — see details</span>
+        </div>
+        <div style="margin-top:6px;margin-left:24px;background:#1e1e2e;border-radius:3px;padding:6px;font-size:11px;border-left:3px solid #f38ba8">
+          <div style="color:#f38ba8;font-weight:bold">Error: Insufficient permissions</div>
+          <div style="color:#cdd6f4;margin-top:2px">Your account does not have write access to modify this user's attributes in Active Directory. Ask your AD administrator to grant you "Write userPrincipalName" and "Write proxyAddresses" permissions on the Users OU, or run this tool as a Domain Admin.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="color:#6c7086;font-size:11px">1 succeeded · 1 failed</span>
+      <div style="display:flex;gap:6px">
+        <div style="background:#313244;color:#cdd6f4;padding:4px 12px;border-radius:3px;cursor:pointer">Export Results CSV</div>
+        <div style="background:#89b4fa;color:#1e1e2e;padding:4px 12px;border-radius:3px;cursor:pointer">Start New Run</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showStep(n) {
+  for(var i=1;i<=4;i++){
+    document.getElementById('step'+i).style.display = i===n ? 'block' : 'none';
+    var btn = document.getElementById('btn'+i);
+    btn.style.background = i===n ? '#89b4fa' : '#45475a';
+    btn.style.color = i===n ? '#1e1e2e' : '#cdd6f4';
+  }
+}
+</script>

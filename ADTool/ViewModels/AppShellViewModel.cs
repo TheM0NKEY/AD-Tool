@@ -20,8 +20,9 @@ public class AppShellViewModel : BaseViewModel
 
     public string WindowTitle => CurrentView switch
     {
-        UPNToolViewModel => "AD Tool — UPN Modifier",
-        _                => "AD Tool"
+        UPNToolViewModel       => "AD Tool — UPN Modifier",
+        AttributeToolViewModel => "AD Tool — Attribute Editor",
+        _                      => "AD Tool"
     };
 
     public RelayCommand LaunchUPNModifierCommand { get; }
@@ -48,6 +49,6 @@ public class AppShellViewModel : BaseViewModel
 
     private void LaunchAttributeEditor()
     {
-        // Wired in Task 8 — AttributeToolViewModel not yet available
+        CurrentView = new AttributeToolViewModel(_adService, ReturnHome);
     }
 }

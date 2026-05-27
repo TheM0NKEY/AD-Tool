@@ -15,7 +15,9 @@
         <DataTemplate DataType="{x:Type vm:UPNToolViewModel}">
             <views:UPNToolView />
         </DataTemplate>
-        <!-- AttributeToolViewModel DataTemplate added in Task 8 -->
+        <DataTemplate DataType="{x:Type vm:AttributeToolViewModel}">
+            <views:AttrToolView />
+        </DataTemplate>
     </Window.Resources>
 
     <ContentControl Content="{Binding CurrentView}"/>

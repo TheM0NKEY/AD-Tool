@@ -56,4 +56,20 @@ public class AppShellViewModelTests
         vm.ReturnHome();
         Assert.Equal("AD Tool", vm.WindowTitle);
     }
+
+    [Fact]
+    public void LaunchAttributeEditor_SetsCurrentViewToAttributeToolViewModel()
+    {
+        var vm = new AppShellViewModel(_adMock.Object, _csvSvc);
+        vm.LaunchAttributeEditorCommand.Execute(null);
+        Assert.IsType<AttributeToolViewModel>(vm.CurrentView);
+    }
+
+    [Fact]
+    public void WindowTitle_IsAttributeEditor_WhenAttributeToolActive()
+    {
+        var vm = new AppShellViewModel(_adMock.Object, _csvSvc);
+        vm.LaunchAttributeEditorCommand.Execute(null);
+        Assert.Equal("AD Tool — Attribute Editor", vm.WindowTitle);
+    }
 }

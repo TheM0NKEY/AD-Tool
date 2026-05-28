@@ -14,8 +14,16 @@ public class AttributeToolViewModel : BaseViewModel
     public BaseViewModel CurrentStep
     {
         get => _currentStep;
-        private set => SetField(ref _currentStep, value);
+        private set
+        {
+            SetField(ref _currentStep, value);
+            OnPropertyChanged(nameof(CurrentStepNumber));
+        }
     }
+
+    public int CurrentStepNumber => Array.IndexOf(_steps, _currentStep) + 1;
+
+    public RelayCommand ReturnHomeCommand { get; }
 
     public AttributeToolViewModel(IAdService adService, Action returnHome)
     {
@@ -26,6 +34,8 @@ public class AttributeToolViewModel : BaseViewModel
 
         _steps = [step1, step2, _step3, step4];
         _currentStep = step1;
+
+        ReturnHomeCommand = new RelayCommand(returnHome);
 
         void Reset()
         {

@@ -13,8 +13,16 @@ public class UPNToolViewModel : BaseViewModel
     public BaseViewModel CurrentStep
     {
         get => _currentStep;
-        private set => SetField(ref _currentStep, value);
+        private set
+        {
+            SetField(ref _currentStep, value);
+            OnPropertyChanged(nameof(CurrentStepNumber));
+        }
     }
+
+    public int CurrentStepNumber => Array.IndexOf(_steps, _currentStep) + 1;
+
+    public RelayCommand ReturnHomeCommand { get; }
 
     public UPNToolViewModel(IAdService adService, CsvImportService csvService, Action returnHome)
     {
@@ -25,6 +33,8 @@ public class UPNToolViewModel : BaseViewModel
 
         _steps = [step1, step2, step3, step4];
         _currentStep = step1;
+
+        ReturnHomeCommand = new RelayCommand(returnHome);
 
         void Reset()
         {

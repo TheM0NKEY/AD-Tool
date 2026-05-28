@@ -9,24 +9,23 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Results list -->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Entries}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="0,0,0,4" Padding="10,8" CornerRadius="3" BorderThickness="1">
+                        <Border Margin="0,0,0,4" Padding="12,10" CornerRadius="5" BorderThickness="1">
                             <Border.Style>
                                 <Style TargetType="Border">
-                                    <Setter Property="Background" Value="#F0FFF0"/>
-                                    <Setter Property="BorderBrush" Value="#81C784"/>
+                                    <Setter Property="Background"  Value="{StaticResource BackgroundPanelBrush}"/>
+                                    <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Failed}">
-                                            <Setter Property="Background" Value="#FFF0F0"/>
-                                            <Setter Property="BorderBrush" Value="#E57373"/>
+                                            <Setter Property="Background"  Value="{StaticResource ErrorBgBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource ErrorBorderBrush}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Pending}">
-                                            <Setter Property="Background" Value="#FAFAFA"/>
-                                            <Setter Property="BorderBrush" Value="#BDBDBD"/>
+                                            <Setter Property="Background"  Value="{StaticResource BackgroundChromeBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -43,29 +42,35 @@
                                             <Style TargetType="TextBlock">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Success}">
-                                                        <Setter Property="Text" Value="&#x2714;"/>
-                                                        <Setter Property="Foreground" Value="Green"/>
+                                                        <Setter Property="Text"       Value="✔"/>
+                                                        <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Failed}">
-                                                        <Setter Property="Text" Value="&#x2718;"/>
-                                                        <Setter Property="Foreground" Value="Red"/>
+                                                        <Setter Property="Text"       Value="✘"/>
+                                                        <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Pending}">
-                                                        <Setter Property="Text" Value="&#x2026;"/>
-                                                        <Setter Property="Foreground" Value="Gray"/>
+                                                        <Setter Property="Text"       Value="…"/>
+                                                        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}"/>
-                                        <TextBlock Foreground="Gray" FontSize="11" Text="{Binding UserUPN}"/>
+                                        <TextBlock FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   Text="{Binding DisplayName}"/>
+                                        <TextBlock FontSize="11"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   Text="{Binding UserUPN}"/>
                                     </StackPanel>
                                     <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="11"
-                                               Text="{Binding ExecutionStatus}" Foreground="Gray" Margin="8,0,0,0"/>
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               Text="{Binding ExecutionStatus}" Margin="8,0,0,0"/>
                                 </Grid>
-                                <Expander Margin="24,6,0,0" Header="{Binding ErrorTitle}" Foreground="Red">
+                                <Expander Margin="24,6,0,0" Header="{Binding ErrorTitle}"
+                                          Foreground="{StaticResource ErrorBrush}">
                                     <Expander.Style>
                                         <Style TargetType="Expander">
                                             <Setter Property="Visibility" Value="Collapsed"/>
@@ -76,8 +81,14 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Expander.Style>
-                                    <Border Background="#FFF3F3" Padding="8,6" Margin="0,4,0,0" CornerRadius="2">
-                                        <TextBlock Text="{Binding ErrorDetail}" TextWrapping="Wrap"/>
+                                    <Border Background="{StaticResource ErrorBgBrush}"
+                                            BorderBrush="{StaticResource ErrorBorderBrush}"
+                                            BorderThickness="1"
+                                            Padding="10,8" Margin="0,4,0,0" CornerRadius="4">
+                                        <TextBlock Text="{Binding ErrorDetail}"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   FontSize="11"/>
                                     </Border>
                                 </Expander>
                             </StackPanel>
@@ -87,25 +98,25 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <!-- Footer -->
         <Grid Grid.Row="1" Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="Gray" FontSize="11">
+            <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                       Foreground="{StaticResource TextMutedBrush}" FontSize="11">
                 <Run Text="{Binding SuccessCount, Mode=OneWay}"/>
-                <Run Text=" succeeded  &#xB7;  "/>
+                <Run Text=" succeeded  ·  "/>
                 <Run Text="{Binding FailCount, Mode=OneWay}"/>
                 <Run Text=" failed"/>
             </TextBlock>
             <Button Grid.Column="1" Content="Export Results CSV"
                     Command="{Binding ExportResultsCommand}"
-                    Padding="10,5" Margin="0,0,8,0"/>
+                    Margin="0,0,8,0"/>
             <Button Grid.Column="2" Content="Start New Run"
                     Command="{Binding StartNewRunCommand}"
-                    Padding="10,5" Background="#1976D2" Foreground="White"/>
+                    Style="{StaticResource PrimaryButtonStyle}"/>
         </Grid>
     </Grid>
 </UserControl>

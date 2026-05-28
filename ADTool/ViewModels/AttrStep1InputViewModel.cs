@@ -17,9 +17,13 @@ public class AttrStep1InputViewModel : BaseViewModel
     private readonly ObservableCollection<AttributeChangeEntry> _entries;
     private readonly IAdService _adService;
     private readonly Action _onNext;
-    private readonly DataTable _inputTable;
+    private DataTable _inputTable;
 
-    public DataTable InputTable => _inputTable;
+    public DataTable InputTable
+    {
+        get => _inputTable;
+        private set { _inputTable = value; OnPropertyChanged(); }
+    }
 
     public RelayCommand ImportCsvCommand { get; }
     public RelayCommand AddColumnCommand { get; }
@@ -121,6 +125,8 @@ public class AttrStep1InputViewModel : BaseViewModel
                     row[ldap] = csv.GetField(idx)?.Trim() ?? "";
                 _inputTable.Rows.Add(row);
             }
+
+            if (attrCols.Count > 0) RefreshInputTable();
         }
         catch (Exception ex)
         {
@@ -136,9 +142,24 @@ public class AttrStep1InputViewModel : BaseViewModel
         var dialog = new AddColumnDialog { Owner = Application.Current?.MainWindow };
         if (dialog.ShowDialog() != true) return;
 
+        bool added = false;
         foreach (var ldapName in dialog.SelectedLdapNames)
             if (!string.IsNullOrWhiteSpace(ldapName) && !_inputTable.Columns.Contains(ldapName))
+            {
                 _inputTable.Columns.Add(ldapName, typeof(string));
+                added = true;
+            }
+
+        if (added) RefreshInputTable();
+    }
+
+    private void RefreshInputTable()
+    {
+        var t = _inputTable;
+        _inputTable = new DataTable();
+        OnPropertyChanged(nameof(InputTable));
+        _inputTable = t;
+        OnPropertyChanged(nameof(InputTable));
     }
 
     private void OpenAdBrowser()

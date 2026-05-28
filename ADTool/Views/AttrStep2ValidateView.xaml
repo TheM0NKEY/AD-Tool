@@ -3,9 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:ADTool.Models"
              Loaded="OnLoaded">
-    <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -14,61 +11,65 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Progress indicator -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8"
-                    Visibility="{Binding IsValidating, Converter={StaticResource BoolToVis}}">
-            <ProgressBar IsIndeterminate="False" Width="200" Height="8" VerticalAlignment="Center"
-                         Minimum="0" Maximum="{Binding TotalCount, Mode=OneWay}" Value="{Binding ValidatedCount, Mode=OneWay}"/>
-            <TextBlock Margin="8,0,0,0" VerticalAlignment="Center">
-                <Run Text="Validating "/>
-                <Run Text="{Binding ValidatedCount, Mode=OneWay}"/>
-                <Run Text=" / "/>
-                <Run Text="{Binding TotalCount, Mode=OneWay}"/>
-            </TextBlock>
-        </StackPanel>
+        <Border Grid.Row="0" Margin="0,0,0,8" CornerRadius="5" Padding="12,8"
+                Background="#1A2A3A" BorderBrush="#2A4A6A" BorderThickness="1"
+                Visibility="{Binding IsValidating, Converter={StaticResource BoolToVis}}">
+            <StackPanel Orientation="Horizontal">
+                <ProgressBar Width="160" VerticalAlignment="Center"
+                             Minimum="0"
+                             Maximum="{Binding TotalCount, Mode=OneWay}"
+                             Value="{Binding ValidatedCount, Mode=OneWay}"
+                             Margin="0,0,10,0"/>
+                <TextBlock Foreground="#88C8E8" FontSize="11" VerticalAlignment="Center">
+                    <Run Text="Validating "/>
+                    <Run Text="{Binding ValidatedCount, Mode=OneWay}"/>
+                    <Run Text=" / "/>
+                    <Run Text="{Binding TotalCount, Mode=OneWay}"/>
+                </TextBlock>
+            </StackPanel>
+        </Border>
 
-        <!-- Results DataGrid -->
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Entries}"
-                  AutoGenerateColumns="False" CanUserAddRows="False"
-                  CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="Column">
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Entries}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="True">
             <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ValidationStatus}" Value="{x:Static models:ValidationStatus.NotFound}">
-                            <Setter Property="Background" Value="#FFF0F0"/>
+                            <Setter Property="Background" Value="{StaticResource ErrorBgBrush}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ValidationStatus}" Value="{x:Static models:ValidationStatus.DuplicateNewUPN}">
-                            <Setter Property="Background" Value="#FFF0F0"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ValidationStatus}" Value="{x:Static models:ValidationStatus.Valid}">
-                            <Setter Property="Background" Value="#F0FFF0"/>
+                            <Setter Property="Background" Value="{StaticResource ErrorBgBrush}"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="" Width="30">
+                <DataGridTemplateColumn Header="" Width="32">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock HorizontalAlignment="Center" FontSize="14">
+                            <TextBlock HorizontalAlignment="Center" FontSize="13">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ValidationStatus}" Value="{x:Static models:ValidationStatus.Valid}">
-                                                <Setter Property="Text" Value="&#x2714;"/>
-                                                <Setter Property="Foreground" Value="Green"/>
+                                                <Setter Property="Text"       Value="&#x2714;"/>
+                                                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding ValidationStatus}" Value="{x:Static models:ValidationStatus.Pending}">
-                                                <Setter Property="Text" Value="&#x2026;"/>
-                                                <Setter Property="Foreground" Value="Gray"/>
+                                                <Setter Property="Text"       Value="&#x2026;"/>
+                                                <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding ValidationStatus}" Value="{x:Static models:ValidationStatus.NotFound}">
-                                                <Setter Property="Text" Value="&#x2718;"/>
-                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="Text"       Value="&#x2718;"/>
+                                                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding ValidationStatus}" Value="{x:Static models:ValidationStatus.DuplicateNewUPN}">
-                                                <Setter Property="Text" Value="&#x2718;"/>
-                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="Text"       Value="&#x2718;"/>
+                                                <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -78,36 +79,35 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="UPN"          Binding="{Binding UserUPN}"          Width="*"/>
-                <DataGridTextColumn Header="Display Name" Binding="{Binding DisplayName}"      Width="160"/>
-                <DataGridTextColumn Header="Status"       Binding="{Binding ValidationStatus}" Width="120"/>
-                <DataGridTextColumn Header="Error"        Binding="{Binding ErrorTitle}"       Width="160"/>
+                <DataGridTextColumn Header="DISPLAY NAME" Binding="{Binding DisplayName}"      Width="160"/>
+                <DataGridTextColumn Header="STATUS"       Binding="{Binding ValidationStatus}" Width="120"/>
+                <DataGridTextColumn Header="ERROR"        Binding="{Binding ErrorTitle}"       Width="160"/>
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Warning banner -->
-        <Border Grid.Row="2" Background="#FFF3CD" BorderBrush="#FFC107" BorderThickness="1"
-                CornerRadius="3" Padding="10,6" Margin="0,8,0,0"
+        <Border Grid.Row="2" CornerRadius="5" Padding="12,8" Margin="0,8,0,0"
+                Background="#2A2A1A" BorderBrush="#4A4A1A" BorderThickness="1"
                 Visibility="{Binding HasInvalidRows, Converter={StaticResource BoolToVis}}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="&#x26A0;  Some users were not found or have errors. " VerticalAlignment="Center"/>
+                <TextBlock Text="&#x26A0;  Some users were not found or have errors. "
+                           Foreground="{StaticResource WarningBrush}" FontSize="11"
+                           VerticalAlignment="Center"/>
                 <Button Command="{Binding RemoveInvalidRowsCommand}"
-                        Background="Transparent" BorderThickness="0" Foreground="#856404"
-                        Cursor="Hand" Padding="0">
-                    <TextBlock Text="Remove invalid rows" TextDecorations="Underline"/>
-                </Button>
+                        Style="{StaticResource DangerButtonStyle}"
+                        Content="Remove invalid rows" Padding="8,4"/>
             </StackPanel>
         </Border>
 
-        <!-- Navigation -->
         <Grid Grid.Row="3" Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="&#x2190; Back" Command="{Binding BackCommand}" Padding="12,5"/>
-            <Button Grid.Column="2" Content="Next: Preview &#x2192;" Command="{Binding NextCommand}"
-                    Padding="12,5" Background="#4CAF50" Foreground="White"/>
+            <Button Grid.Column="0" Content="&#x2190; Back" Command="{Binding BackCommand}"/>
+            <Button Grid.Column="2" Content="Next: Preview &#x2192;"
+                    Command="{Binding NextCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}"/>
         </Grid>
     </Grid>
 </UserControl>

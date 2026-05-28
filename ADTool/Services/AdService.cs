@@ -177,13 +177,27 @@ public class AdService : IAdService
         {
             try
             {
-                using var ctx = new PrincipalContext(ContextType.Domain);
-                using var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, upn);
-                if (user is null)
+                if (attributes.Count == 0)
+                    return new ExecutionResult(true);
+
+                using var rootDse = new DirectoryEntry("LDAP://RootDSE");
+                string defaultNC = rootDse.Properties["defaultNamingContext"][0]!.ToString()!;
+
+                using var searchRoot = new DirectoryEntry($"LDAP://{defaultNC}");
+                using var searcher = new DirectorySearcher(searchRoot)
+                {
+                    Filter = $"(&(objectCategory=user)(userPrincipalName={upn}))",
+                    SearchScope = SearchScope.Subtree
+                };
+
+                var sr = searcher.FindOne();
+                if (sr is null)
                     return new ExecutionResult(false, ExecutionErrorType.UnexpectedError,
                         "User not found at execution time.");
 
-                var de = (DirectoryEntry)user.GetUnderlyingObject();
+                using var de = sr.GetDirectoryEntry();
+                de.RefreshCache(attributes.Keys.ToArray());
+
                 foreach (var (ldapName, value) in attributes)
                 {
                     var prop = de.Properties[ldapName];
@@ -200,7 +214,8 @@ public class AdService : IAdService
             }
             catch (Exception ex)
             {
-                return new ExecutionResult(false, ExecutionErrorType.UnexpectedError, ex.Message);
+                var attrList = attributes.Count > 0 ? $" [attrs: {string.Join(", ", attributes.Keys)}]" : "";
+                return new ExecutionResult(false, ExecutionErrorType.UnexpectedError, ex.Message + attrList);
             }
         });
     }

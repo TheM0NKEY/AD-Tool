@@ -50,4 +50,31 @@ public class StepIndicatorControlTests
         var items = StepIndicatorControl.BuildItems(null, 1);
         Assert.Empty(items);
     }
+
+    [Fact]
+    public void BuildItems_LastStepActive_AllOtherCompleted()
+    {
+        var items = StepIndicatorControl.BuildItems(Labels, 4);
+        Assert.Equal(StepState.Completed, items[0].State);
+        Assert.Equal(StepState.Completed, items[1].State);
+        Assert.Equal(StepState.Completed, items[2].State);
+        Assert.Equal(StepState.Active,    items[3].State);
+    }
+
+    [Fact]
+    public void BuildItems_CurrentStepOutOfRange_ClampsToValid()
+    {
+        var items = StepIndicatorControl.BuildItems(Labels, 99);
+        Assert.Equal(StepState.Active, items[3].State);  // last step active, not all Completed
+
+        var items2 = StepIndicatorControl.BuildItems(Labels, 0);
+        Assert.Equal(StepState.Active, items2[0].State); // first step active, not all Pending
+    }
+
+    [Fact]
+    public void BuildItems_EmptySteps_ReturnsEmpty()
+    {
+        var items = StepIndicatorControl.BuildItems([], 1);
+        Assert.Empty(items);
+    }
 }

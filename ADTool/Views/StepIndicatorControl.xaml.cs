@@ -58,6 +58,7 @@ public partial class StepIndicatorControl : UserControl
         IReadOnlyList<string>? steps, int currentStep)
     {
         if (steps == null || steps.Count == 0) return [];
+        currentStep = Math.Clamp(currentStep, 1, steps.Count);
         return steps.Select((label, i) => new StepDisplayItem
         {
             Label         = label,

@@ -4,12 +4,10 @@
         xmlns:models="clr-namespace:ADTool.Models"
         Title="Browse Active Directory" Height="520" Width="780"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="CanResize">
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-    </Window.Resources>
+        ResizeMode="CanResize"
+        Background="{StaticResource BackgroundDeepBrush}">
 
-    <Grid Margin="10">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -29,25 +27,28 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Organisational Units" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <TextBlock Grid.Row="0" Text="Organisational Units"
+                           FontWeight="SemiBold" FontSize="11"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Margin="0,0,0,6"/>
                 <Grid Grid.Row="1">
                     <TreeView x:Name="OuTreeView" ItemsSource="{Binding OuNodes}"
                               SelectedItemChanged="OnOuSelected">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type models:OuNode}"
                                                       ItemsSource="{Binding Children}">
-                                <TextBlock Text="{Binding Name}" Padding="2,1"/>
+                                <TextBlock Text="{Binding Name}" Padding="2,2"/>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Visibility="{Binding IsLoadingTree, Converter={StaticResource BoolToVis}}">
-                        <TextBlock Text="Loading..." Foreground="Gray" HorizontalAlignment="Center"/>
-                    </StackPanel>
+                    <TextBlock Text="Loading&#x2026;"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding IsLoadingTree, Converter={StaticResource BoolToVis}}"/>
                 </Grid>
             </Grid>
 
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="#DDD"/>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
 
             <!-- Right: user list -->
             <Grid Grid.Column="2" Margin="8,0,0,0">
@@ -55,30 +56,34 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Users (all levels of selected OU)" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <TextBlock Grid.Row="0" Text="Users (all levels of selected OU)"
+                           FontWeight="SemiBold" FontSize="11"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Margin="0,0,0,6"/>
                 <Grid Grid.Row="1">
                     <DataGrid ItemsSource="{Binding Users}"
                               AutoGenerateColumns="False"
                               CanUserAddRows="False"
                               CanUserDeleteRows="False"
-                              HeadersVisibility="Column"
                               IsReadOnly="False"
                               SelectionMode="Single">
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="&#x2713;" Width="32"
                                 Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"/>
-                            <DataGridTextColumn Header="UPN" Binding="{Binding UPN}" Width="*" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Display Name" Binding="{Binding DisplayName}" Width="180" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="UPN"          Binding="{Binding UPN}"         Width="*"   IsReadOnly="True"/>
+                            <DataGridTextColumn Header="DISPLAY NAME" Binding="{Binding DisplayName}" Width="180" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBlock Text="Loading users&#x2026;" HorizontalAlignment="Center" VerticalAlignment="Center"
-                               Foreground="Gray"
+                    <TextBlock Text="Loading users&#x2026;"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{StaticResource TextMutedBrush}"
                                Visibility="{Binding IsLoadingUsers, Converter={StaticResource BoolToVis}}"/>
-                    <TextBlock Text="Select an OU on the left to view users" HorizontalAlignment="Center"
-                               VerticalAlignment="Center" Foreground="Gray" FontStyle="Italic">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{StaticResource TextMutedBrush}" FontStyle="Italic">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Text"       Value="Select an OU on the left to view users"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding SelectedOu}" Value="{x:Null}">
                                         <Setter Property="Visibility" Value="Visible"/>
@@ -99,18 +104,19 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="Gray" FontSize="11">
+            <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                       Foreground="{StaticResource TextMutedBrush}" FontSize="11">
                 <Run Text="{Binding Users.Count, Mode=OneWay}"/>
                 <Run Text=" users in selected OU"/>
             </TextBlock>
             <Button Grid.Column="1" Content="Add Selected to List"
                     Command="{Binding AddSelectedToListCommand}"
-                    Padding="12,5" Margin="0,0,8,0"
-                    Background="#4CAF50" Foreground="White"/>
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Margin="0,0,8,0"/>
             <Button Grid.Column="2" Content="Export to CSV"
                     Command="{Binding ExportToCsvCommand}"
-                    Padding="12,5" Margin="0,0,8,0"/>
-            <Button Grid.Column="3" Content="Cancel" Click="OnCancel" Padding="12,5"/>
+                    Margin="0,0,8,0"/>
+            <Button Grid.Column="3" Content="Cancel" Click="OnCancel"/>
         </Grid>
     </Grid>
 </Window>

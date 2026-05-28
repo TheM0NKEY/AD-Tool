@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Add Columns" Width="380" Height="480"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{StaticResource BackgroundDeepBrush}">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -12,24 +13,35 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Select attributes to add as columns:"
-                   FontWeight="SemiBold" Margin="0,0,0,8"/>
+        <TextBlock Grid.Row="0"
+                   Text="Select attributes to add as columns:"
+                   FontWeight="SemiBold" FontSize="12"
+                   Foreground="{StaticResource TextPrimaryBrush}"
+                   Margin="0,0,0,8"/>
 
-        <ListBox Grid.Row="1" x:Name="AttributeList" Margin="0,0,0,12">
+        <ListBox Grid.Row="1" x:Name="AttributeList" Margin="0,0,0,12"
+                 BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding DisplayName}" Padding="4,2"/>
+                    <CheckBox IsChecked="{Binding IsChecked}"
+                              Content="{Binding DisplayName}"
+                              Padding="4,2"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,16">
-            <TextBlock Text="Custom LDAP name:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-            <TextBox x:Name="CustomLdapTextBox" Width="190" ToolTip="e.g. msDS-cloudExtensionAttribute1"/>
+            <TextBlock Text="Custom LDAP name:" VerticalAlignment="Center"
+                       Foreground="{StaticResource TextMutedBrush}" FontSize="11"
+                       Margin="0,0,8,0"/>
+            <TextBox x:Name="CustomLdapTextBox" Width="190"
+                     ToolTip="e.g. msDS-cloudExtensionAttribute1"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Click="OkButton_Click" Width="80" Margin="0,0,8,0" IsDefault="True"/>
+            <Button Content="OK" Click="OkButton_Click" Width="80"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Margin="0,0,8,0" IsDefault="True"/>
             <Button Content="Cancel" IsCancel="True" Width="80"/>
         </StackPanel>
     </Grid>

@@ -139,7 +139,7 @@ A separate tool accessible from the home screen for bulk-setting AD attributes a
 | `Phone` | `telephoneNumber` |
 | `Manager` | `manager` |
 | `EmployeeID` | `employeeID` |
-| `CustomAttribute1`–`CustomAttribute15` | `extensionAttribute1`–`extensionAttribute15` |
+| `CloudAttribute1`–`CloudAttribute20` | `msDS-cloudExtensionAttribute1`–`msDS-cloudExtensionAttribute20` |
 | Any other column header | Used verbatim as the LDAP attribute name |
 
 Blank cells in a row are skipped — only non-blank values are written to AD.

@@ -11,26 +11,23 @@
 
         <!-- Toolbar -->
         <WrapPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-            <Button Content="&#x1F4C2;  Import CSV"
-                    Command="{Binding ImportCsvCommand}" Padding="10,5" Margin="0,0,8,0"/>
-            <Button Content="&#x1F50D;  Browse AD&#x2026;"
-                    Command="{Binding OpenAdBrowserCommand}" Padding="10,5" Margin="0,0,8,0"/>
-            <Button Content="+ Add Column"
-                    Command="{Binding AddColumnCommand}" Padding="10,5"/>
+            <Button Content="📂  Import CSV"    Command="{Binding ImportCsvCommand}"    Margin="0,0,8,0"/>
+            <Button Content="🔍  Browse AD…"    Command="{Binding OpenAdBrowserCommand}" Margin="0,0,8,0"/>
+            <Button Content="+ Add Column"      Command="{Binding AddColumnCommand}"/>
         </WrapPanel>
 
         <!-- Hint -->
         <TextBlock Grid.Row="1"
                    Text="Import a CSV (UPN column required) or browse AD to add users. Use 'Add Column' to choose which attributes to set."
-                   Foreground="Gray" FontSize="11" Margin="0,0,0,4" TextWrapping="Wrap"/>
+                   Foreground="{StaticResource TextMutedBrush}" FontSize="11"
+                   Margin="0,0,0,6" TextWrapping="Wrap"/>
 
-        <!-- DataGrid bound to DataTable — columns are dynamic -->
+        <!-- DataGrid -->
         <DataGrid Grid.Row="2"
                   ItemsSource="{Binding InputTable}"
                   AutoGenerateColumns="True"
                   CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  HeadersVisibility="Column"/>
+                  CanUserDeleteRows="False"/>
 
         <!-- Footer -->
         <Grid Grid.Row="3" Margin="0,8,0,0">
@@ -39,15 +36,16 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="Gray" FontSize="11">
+            <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                       Foreground="{StaticResource TextMutedBrush}" FontSize="11">
                 <Run Text="{Binding InputTable.Rows.Count, Mode=OneWay}"/>
                 <Run Text=" rows"/>
             </TextBlock>
             <Button Grid.Column="1" Content="+ Add Row"
-                    Command="{Binding AddRowCommand}" Padding="8,5" Margin="0,0,8,0"/>
-            <Button Grid.Column="2" Content="Next: Validate &#x2192;"
+                    Command="{Binding AddRowCommand}" Margin="0,0,8,0"/>
+            <Button Grid.Column="2" Content="Next: Validate →"
                     Command="{Binding NextCommand}"
-                    Padding="12,5" Background="#4CAF50" Foreground="White"/>
+                    Style="{StaticResource PrimaryButtonStyle}"/>
         </Grid>
     </Grid>
 </UserControl>

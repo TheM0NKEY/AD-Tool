@@ -9,23 +9,22 @@
         </Grid.RowDefinitions>
 
         <!-- Info banner -->
-        <Border Grid.Row="0" Background="#E8F5E9" BorderBrush="#4CAF50" BorderThickness="1"
-                CornerRadius="3" Padding="10,6" Margin="0,0,0,8">
-            <TextBlock>
-                <Run Text="&#x2714;  "/>
+        <Border Grid.Row="0" CornerRadius="5" Padding="12,8" Margin="0,0,0,8"
+                Background="#1A2A1A" BorderBrush="#2A4A2A" BorderThickness="1">
+            <TextBlock Foreground="#88C888" FontSize="11">
+                <Run Text="✔  "/>
                 <Run Text="{Binding EntryCount, Mode=OneWay}"/>
                 <Run Text=" users ready. Review the attribute changes below — this cannot be undone."/>
             </TextBlock>
         </Border>
 
-        <!-- Preview DataGrid with auto-generated columns from DataTable -->
+        <!-- Preview DataGrid -->
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding PreviewTable}"
                   AutoGenerateColumns="True"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
-                  IsReadOnly="True"
-                  HeadersVisibility="Column"/>
+                  IsReadOnly="True"/>
 
         <!-- Navigation -->
         <Grid Grid.Row="2" Margin="0,8,0,0">
@@ -34,10 +33,11 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="&#x2190; Back" Command="{Binding BackCommand}" Padding="12,5"/>
+            <Button Grid.Column="0" Content="← Back" Command="{Binding BackCommand}"/>
             <Button Grid.Column="2" Content="Execute Changes"
                     Command="{Binding NextCommand}"
-                    Padding="16,6" Background="#D32F2F" Foreground="White" FontWeight="Bold"/>
+                    Style="{StaticResource DangerButtonStyle}"
+                    FontWeight="Bold"/>
         </Grid>
     </Grid>
 </UserControl>

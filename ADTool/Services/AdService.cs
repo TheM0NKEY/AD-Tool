@@ -196,15 +196,26 @@ public class AdService : IAdService
                         "User not found at execution time.");
 
                 using var de = sr.GetDirectoryEntry();
-                de.RefreshCache(attributes.Keys.ToArray());
+                var errors = new List<string>();
 
                 foreach (var (ldapName, value) in attributes)
                 {
-                    var prop = de.Properties[ldapName];
-                    prop.Clear();
-                    prop.Add(value);
+                    try
+                    {
+                        de.Properties[ldapName].Clear();
+                        de.Properties[ldapName].Add(value);
+                        de.CommitChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        errors.Add($"{ldapName}: {ex.Message}");
+                        try { de.RefreshCache(); } catch { /* best-effort reset before next attr */ }
+                    }
                 }
-                de.CommitChanges();
+
+                if (errors.Count > 0)
+                    return new ExecutionResult(false, ExecutionErrorType.UnexpectedError,
+                        string.Join("; ", errors));
 
                 return new ExecutionResult(true);
             }
@@ -214,8 +225,7 @@ public class AdService : IAdService
             }
             catch (Exception ex)
             {
-                var attrList = attributes.Count > 0 ? $" [attrs: {string.Join(", ", attributes.Keys)}]" : "";
-                return new ExecutionResult(false, ExecutionErrorType.UnexpectedError, ex.Message + attrList);
+                return new ExecutionResult(false, ExecutionErrorType.UnexpectedError, ex.Message);
             }
         });
     }

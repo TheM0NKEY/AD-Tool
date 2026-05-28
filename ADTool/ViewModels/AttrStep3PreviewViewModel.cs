@@ -6,20 +6,39 @@ namespace ADTool.ViewModels;
 
 public class AttrStep3PreviewViewModel : BaseViewModel
 {
-    public DataTable PreviewTable { get; }
+    private readonly ObservableCollection<AttributeChangeEntry> _entries;
+    private DataTable _previewTable = new();
+    private int _entryCount;
+
+    public DataTable PreviewTable
+    {
+        get => _previewTable;
+        private set => SetField(ref _previewTable, value);
+    }
+
+    public int EntryCount
+    {
+        get => _entryCount;
+        private set => SetField(ref _entryCount, value);
+    }
+
     public RelayCommand BackCommand { get; }
     public RelayCommand NextCommand { get; }
-    public int EntryCount { get; }
 
     public AttrStep3PreviewViewModel(
         ObservableCollection<AttributeChangeEntry> entries,
         Action onBack,
         Action onNext)
     {
+        _entries = entries;
         BackCommand = new RelayCommand(onBack);
         NextCommand = new RelayCommand(onNext);
-        EntryCount = entries.Count;
-        PreviewTable = BuildPreviewTable(entries);
+    }
+
+    public void Refresh()
+    {
+        EntryCount = _entries.Count;
+        PreviewTable = BuildPreviewTable(_entries);
     }
 
     private static DataTable BuildPreviewTable(IEnumerable<AttributeChangeEntry> entries)

@@ -185,7 +185,11 @@ public class AdService : IAdService
 
                 var de = (DirectoryEntry)user.GetUnderlyingObject();
                 foreach (var (ldapName, value) in attributes)
-                    de.Properties[ldapName].Value = value;
+                {
+                    var prop = de.Properties[ldapName];
+                    prop.Clear();
+                    prop.Add(value);
+                }
                 de.CommitChanges();
 
                 return new ExecutionResult(true);

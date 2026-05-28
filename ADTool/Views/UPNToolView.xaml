@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:ADTool.ViewModels"
-             xmlns:views="clr-namespace:ADTool.Views">
+             xmlns:views="clr-namespace:ADTool.Views"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime">
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type vm:Step1InputViewModel}">
             <views:Step1InputView />
@@ -16,27 +17,49 @@
         <DataTemplate DataType="{x:Type vm:Step4ExecuteViewModel}">
             <views:Step4ExecuteView />
         </DataTemplate>
-        <Style x:Key="StepLabel" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Margin" Value="4,0"/>
-        </Style>
     </UserControl.Resources>
-    <Grid>
+
+    <Grid Background="{StaticResource BackgroundDeepBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Background="#2D2D30" Padding="16,8">
+
+        <!-- Title bar -->
+        <Border Grid.Row="0"
+                Background="{StaticResource BackgroundChromeBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="16,8">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="1  Input"    Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text=" › "          Foreground="#555"    Style="{StaticResource StepLabel}"/>
-                <TextBlock Text="2  Validate" Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text=" › "          Foreground="#555"    Style="{StaticResource StepLabel}"/>
-                <TextBlock Text="3  Preview"  Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
-                <TextBlock Text=" › "          Foreground="#555"    Style="{StaticResource StepLabel}"/>
-                <TextBlock Text="4  Execute"  Foreground="#9CDCFE" Style="{StaticResource StepLabel}"/>
+                <TextBlock FontSize="11" VerticalAlignment="Center" Cursor="Hand">
+                    <Hyperlink Command="{Binding ReturnHomeCommand}"
+                               Foreground="{StaticResource AccentBrush}"
+                               TextDecorations="None">← Home</Hyperlink>
+                </TextBlock>
+                <Rectangle Width="1" Height="14" Fill="{StaticResource BorderSubtleBrush}" Margin="12,0"/>
+                <TextBlock Text="UPN Bulk Modifier"
+                           FontSize="12" FontWeight="Medium"
+                           FontFamily="Segoe UI Variable, Segoe UI"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"/>
             </StackPanel>
         </Border>
-        <ContentControl Grid.Row="1" Content="{Binding CurrentStep}" Margin="16"/>
+
+        <!-- Step indicator -->
+        <views:StepIndicatorControl Grid.Row="1" CurrentStep="{Binding CurrentStepNumber}">
+            <views:StepIndicatorControl.Steps>
+                <x:Array Type="{x:Type sys:String}">
+                    <sys:String>Input</sys:String>
+                    <sys:String>Validate</sys:String>
+                    <sys:String>Preview</sys:String>
+                    <sys:String>Execute</sys:String>
+                </x:Array>
+            </views:StepIndicatorControl.Steps>
+        </views:StepIndicatorControl>
+
+        <!-- Step content -->
+        <ContentControl Grid.Row="2" Content="{Binding CurrentStep}" Margin="16"/>
     </Grid>
 </UserControl>

@@ -47,10 +47,11 @@ public class AdService : IAdService
                 if (user is null)
                     return new ExecutionResult(false, ExecutionErrorType.UnexpectedError, "User not found at execution time.");
 
+                string dn = user.DistinguishedName!;
                 user.UserPrincipalName = newUpn;
                 user.Save();
 
-                var de = (DirectoryEntry)user.GetUnderlyingObject();
+                using var de = new DirectoryEntry($"LDAP://{dn}");
                 var proxies = de.Properties["proxyAddresses"];
                 var existing = proxies.Count > 0 ? proxies.Cast<string>().ToList() : new List<string>();
                 var updated = ProxyAddressHelper.UpdateProxyAddresses(existing, oldUpn, newUpn);

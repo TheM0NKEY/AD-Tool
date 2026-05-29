@@ -7,6 +7,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>ADTool</AssemblyName>
     <RootNamespace>ADTool</RootNamespace>
+    <ApplicationIcon>Assets\monkey.ico</ApplicationIcon>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>

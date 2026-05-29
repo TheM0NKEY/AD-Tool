@@ -59,8 +59,10 @@ public class AdService : IAdService
                 foreach (var addr in updated)
                     proxies.Add(addr);
 
-                de.Properties["mail"].Value = newUpn;
-                de.Properties["mailNickname"].Value = newUpn.IndexOf('@') > 0 ? newUpn[..newUpn.IndexOf('@')] : newUpn;
+                de.Properties["mail"].Clear();
+                de.Properties["mail"].Add(newUpn);
+                de.Properties["mailNickname"].Clear();
+                de.Properties["mailNickname"].Add(newUpn.Contains('@') ? newUpn.Split('@')[0] : newUpn);
 
                 de.CommitChanges();
 

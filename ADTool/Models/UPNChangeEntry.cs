@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace ADTool.Models;
 
 public enum ValidationStatus { Pending, Valid, NotFound, DuplicateNewUPN, InvalidDomain }
-public enum ExecutionStatus { Pending, Success, Failed }
+public enum ExecutionStatus { Pending, Success, Warning, Failed }
 
 public class UPNChangeEntry : INotifyPropertyChanged
 {

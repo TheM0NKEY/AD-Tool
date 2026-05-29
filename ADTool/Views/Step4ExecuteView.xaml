@@ -26,6 +26,11 @@
                                             <Setter Property="BorderBrush" Value="{StaticResource ErrorBorderBrush}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding ExecutionStatus}"
+                                                     Value="{x:Static models:ExecutionStatus.Warning}">
+                                            <Setter Property="Background"  Value="{StaticResource WarningBgBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource WarningBorderBrush}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ExecutionStatus}"
                                                      Value="{x:Static models:ExecutionStatus.Pending}">
                                             <Setter Property="Background"  Value="{StaticResource BackgroundChromeBrush}"/>
                                             <Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
@@ -47,6 +52,10 @@
                                                     <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Success}">
                                                         <Setter Property="Text"       Value="✔"/>
                                                         <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Warning}">
+                                                        <Setter Property="Text"       Value="⚠"/>
+                                                        <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding ExecutionStatus}" Value="{x:Static models:ExecutionStatus.Failed}">
                                                         <Setter Property="Text"       Value="✘"/>
@@ -76,24 +85,40 @@
                                                Text="{Binding ExecutionStatus}" Margin="8,0,0,0"/>
                                 </Grid>
 
-                                <!-- Error expander -->
-                                <Expander Margin="24,6,0,0" Header="{Binding ErrorTitle}"
-                                          Foreground="{StaticResource ErrorBrush}">
+                                <!-- Error / warning expander -->
+                                <Expander Margin="24,6,0,0" Header="{Binding ErrorTitle}">
                                     <Expander.Style>
                                         <Style TargetType="Expander">
                                             <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding ExecutionStatus}"
                                                              Value="{x:Static models:ExecutionStatus.Failed}">
                                                     <Setter Property="Visibility" Value="Visible"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding ExecutionStatus}"
+                                                             Value="{x:Static models:ExecutionStatus.Warning}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Expander.Style>
-                                    <Border Background="{StaticResource ErrorBgBrush}"
-                                            BorderBrush="{StaticResource ErrorBorderBrush}"
-                                            BorderThickness="1"
-                                            Padding="10,8" Margin="0,4,0,0" CornerRadius="4">
+                                    <Border Padding="10,8" Margin="0,4,0,0" CornerRadius="4" BorderThickness="1">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background"   Value="{StaticResource ErrorBgBrush}"/>
+                                                <Setter Property="BorderBrush"  Value="{StaticResource ErrorBorderBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ExecutionStatus}"
+                                                                 Value="{x:Static models:ExecutionStatus.Warning}">
+                                                        <Setter Property="Background"  Value="{StaticResource WarningBgBrush}"/>
+                                                        <Setter Property="BorderBrush" Value="{StaticResource WarningBorderBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
                                         <TextBlock Text="{Binding ErrorDetail}"
                                                    TextWrapping="Wrap"
                                                    Foreground="{StaticResource TextPrimaryBrush}"

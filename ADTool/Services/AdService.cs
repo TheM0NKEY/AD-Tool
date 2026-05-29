@@ -52,22 +52,51 @@ public class AdService : IAdService
                 user.Save();
 
                 using var de = new DirectoryEntry($"LDAP://{dn}");
+                var warnings = new List<string>();
+
                 var proxies = de.Properties["proxyAddresses"];
                 var existing = proxies.Count > 0 ? proxies.Cast<string>().ToList() : new List<string>();
                 var updated = ProxyAddressHelper.UpdateProxyAddresses(existing, oldUpn, newUpn);
+                try
+                {
+                    proxies.Clear();
+                    foreach (var addr in updated)
+                        proxies.Add(addr);
+                    de.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add($"proxyAddresses: {ex.Message}");
+                    try { de.RefreshCache(); } catch { }
+                }
 
-                proxies.Clear();
-                foreach (var addr in updated)
-                    proxies.Add(addr);
+                try
+                {
+                    de.Properties["mail"].Clear();
+                    de.Properties["mail"].Add(newUpn);
+                    de.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add($"mail: {ex.Message}");
+                    try { de.RefreshCache(); } catch { }
+                }
 
-                de.Properties["mail"].Clear();
-                de.Properties["mail"].Add(newUpn);
-                de.Properties["mailNickname"].Clear();
-                de.Properties["mailNickname"].Add(newUpn.Contains('@') ? newUpn.Split('@')[0] : newUpn);
+                try
+                {
+                    de.Properties["mailNickname"].Clear();
+                    de.Properties["mailNickname"].Add(newUpn.Contains('@') ? newUpn.Split('@')[0] : newUpn);
+                    de.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add($"mailNickname: {ex.Message}");
+                    try { de.RefreshCache(); } catch { }
+                }
 
-                de.CommitChanges();
-
-                return new ExecutionResult(true);
+                return warnings.Count > 0
+                    ? new ExecutionResult(true, Warnings: warnings)
+                    : new ExecutionResult(true);
             }
             catch (UnauthorizedAccessException ex)
             {

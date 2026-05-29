@@ -14,7 +14,8 @@ public record ValidationResult(
 public record ExecutionResult(
     bool Success,
     ExecutionErrorType ErrorType = ExecutionErrorType.None,
-    string? TechnicalDetail = null);
+    string? TechnicalDetail = null,
+    IReadOnlyList<string>? Warnings = null);
 
 public interface IAdService
 {

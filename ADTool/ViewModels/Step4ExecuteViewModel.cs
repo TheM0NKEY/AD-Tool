@@ -57,14 +57,23 @@ public class Step4ExecuteViewModel : BaseViewModel
         foreach (var entry in _entries)
         {
             var result = await _adService.UpdateUserAsync(entry.OldUPN, entry.NewUPN);
-            entry.ExecutionStatus = result.Success ? ExecutionStatus.Success : ExecutionStatus.Failed;
 
-            if (result.Success)
+            if (result.Success && result.Warnings?.Count > 0)
             {
+                entry.ExecutionStatus = ExecutionStatus.Warning;
+                var skipped = string.Join(", ", result.Warnings.Select(w => w.Split(':')[0]));
+                entry.ErrorTitle = "UPN changed — some attributes were skipped";
+                entry.ErrorDetail = $"The following attributes could not be updated (they may not exist in this domain's schema): {skipped}";
+                SuccessCount++;
+            }
+            else if (result.Success)
+            {
+                entry.ExecutionStatus = ExecutionStatus.Success;
                 SuccessCount++;
             }
             else
             {
+                entry.ExecutionStatus = ExecutionStatus.Failed;
                 (entry.ErrorTitle, entry.ErrorDetail) =
                     ErrorMessages.ForExecutionFailure(result.ErrorType, result.TechnicalDetail);
                 FailCount++;

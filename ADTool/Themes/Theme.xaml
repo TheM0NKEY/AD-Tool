@@ -18,6 +18,8 @@
     <SolidColorBrush x:Key="ErrorBgBrush"          Color="#2A1A1A"/>
     <SolidColorBrush x:Key="ErrorBorderBrush"      Color="#6A3333"/>
     <SolidColorBrush x:Key="WarningBrush"          Color="#E9C46A"/>
+    <SolidColorBrush x:Key="WarningBgBrush"        Color="#2A2210"/>
+    <SolidColorBrush x:Key="WarningBorderBrush"    Color="#6A5520"/>
     <SolidColorBrush x:Key="TextPrimaryBrush"      Color="#CCCCCC"/>
     <SolidColorBrush x:Key="TextMutedBrush"        Color="#777777"/>
     <SolidColorBrush x:Key="TextDimBrush"          Color="#555555"/>

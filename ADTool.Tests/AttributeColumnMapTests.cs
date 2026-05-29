@@ -31,11 +31,13 @@ public class AttributeColumnMapTests
     }
 
     [Theory]
-    [InlineData("CustomAttribute1",  "extensionAttribute1")]
-    [InlineData("customattribute1",  "extensionAttribute1")]
-    [InlineData("CustomAttribute15", "extensionAttribute15")]
-    [InlineData("customattribute7",  "extensionAttribute7")]
-    public void Resolve_CustomAttributeHeader_ReturnsExtensionAttribute(string header, string expectedLdap)
+    [InlineData("CloudAttribute1",    "msDS-cloudExtensionAttribute1")]
+    [InlineData("cloudattribute1",    "msDS-cloudExtensionAttribute1")]
+    [InlineData("Cloud Attribute 1",  "msDS-cloudExtensionAttribute1")]
+    [InlineData("CloudAttribute7",    "msDS-cloudExtensionAttribute7")]
+    [InlineData("CloudAttribute15",   "msDS-cloudExtensionAttribute15")]
+    [InlineData("Cloud Attribute 20", "msDS-cloudExtensionAttribute20")]
+    public void Resolve_CloudAttributeHeader_ReturnsMsDsCloudExtensionAttribute(string header, string expectedLdap)
     {
         Assert.Equal(expectedLdap, AttributeColumnMap.Resolve(header));
     }
@@ -52,7 +54,7 @@ public class AttributeColumnMapTests
     [Fact]
     public void WellKnownAttributes_HasExpectedCount()
     {
-        // 8 HR attributes + 15 custom = 23
-        Assert.Equal(23, AttributeColumnMap.WellKnownAttributes.Count);
+        // 8 HR attributes + 20 cloud extension attributes = 28
+        Assert.Equal(28, AttributeColumnMap.WellKnownAttributes.Count);
     }
 }

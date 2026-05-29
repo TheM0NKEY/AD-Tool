@@ -15,6 +15,7 @@ public class AttrStep3PreviewViewModelTests
                     Attributes = { ["department"] = "IT" } }
         };
         var vm = new AttrStep3PreviewViewModel(entries, () => { }, () => { });
+        vm.Refresh();
         Assert.True(vm.PreviewTable.Columns.Contains("Display Name"));
         Assert.True(vm.PreviewTable.Columns.Contains("UPN"));
     }
@@ -28,6 +29,7 @@ public class AttrStep3PreviewViewModelTests
                     Attributes = { ["department"] = "IT", ["title"] = "Dev" } }
         };
         var vm = new AttrStep3PreviewViewModel(entries, () => { }, () => { });
+        vm.Refresh();
         Assert.True(vm.PreviewTable.Columns.Contains("department"));
         Assert.True(vm.PreviewTable.Columns.Contains("title"));
     }
@@ -41,6 +43,7 @@ public class AttrStep3PreviewViewModelTests
             new() { UserUPN = "b@contoso.com", Attributes = { ["department"] = "HR" } }
         };
         var vm = new AttrStep3PreviewViewModel(entries, () => { }, () => { });
+        vm.Refresh();
         Assert.Equal(2, vm.PreviewTable.Rows.Count);
     }
 
@@ -53,6 +56,7 @@ public class AttrStep3PreviewViewModelTests
                     Attributes = { ["department"] = "Engineering" } }
         };
         var vm = new AttrStep3PreviewViewModel(entries, () => { }, () => { });
+        vm.Refresh();
         var row = vm.PreviewTable.Rows[0];
         Assert.Equal("alice@contoso.com", row["UPN"]);
         Assert.Equal("Alice Smith",       row["Display Name"]);
@@ -68,6 +72,7 @@ public class AttrStep3PreviewViewModelTests
             new() { UserUPN = "b@c.com", Attributes = { /* no department */ } }
         };
         var vm = new AttrStep3PreviewViewModel(entries, () => { }, () => { });
+        vm.Refresh();
         Assert.Equal("", vm.PreviewTable.Rows[1]["department"]);
     }
 }

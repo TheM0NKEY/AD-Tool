@@ -167,9 +167,9 @@
         <Setter Property="Foreground"              Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderBrush"             Value="{StaticResource BorderSubtleBrush}"/>
         <Setter Property="BorderThickness"         Value="1"/>
-        <Setter Property="GridLinesVisibility"     Value="Horizontal"/>
+        <Setter Property="GridLinesVisibility"     Value="All"/>
         <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BorderSubtleBrush}"/>
-        <Setter Property="VerticalGridLinesBrush"  Value="Transparent"/>
+        <Setter Property="VerticalGridLinesBrush"  Value="{StaticResource BorderSubtleBrush}"/>
         <Setter Property="RowBackground"           Value="{StaticResource BackgroundPanelBrush}"/>
         <Setter Property="AlternatingRowBackground" Value="{StaticResource BackgroundAltBrush}"/>
         <Setter Property="ColumnHeaderHeight"      Value="32"/>
@@ -212,6 +212,20 @@
         <Setter Property="BorderThickness"          Value="0"/>
         <Setter Property="Padding"                  Value="8,0"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridCell">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="Transparent"/>

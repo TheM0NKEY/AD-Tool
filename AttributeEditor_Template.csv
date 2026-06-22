@@ -1,0 +1,3 @@
+UPN,Department,Title,Company,Office,Phone,Pager,Description,Manager,Employee ID,Cloud Attribute 1,Cloud Attribute 2
+john.doe@contoso.com,IT,Systems Administrator,Contoso Ltd,Head Office,+44 1234 567890,+44 1234 999001,Main IT admin,CN=Jane Smith,CN=Users,DC=contoso,DC=com,EMP001,,
+jane.smith@contoso.com,HR,HR Manager,Contoso Ltd,Head Office,+44 1234 567891,,HR department lead,,EMP002,,
